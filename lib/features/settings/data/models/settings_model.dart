@@ -20,17 +20,17 @@ class SettingsModel extends Settings {
 
   Map<String, dynamic> toJSON() {
     return {
-      'backgroundColor': [
+      "backgroundColor": [
         backgroundColor.red,
         backgroundColor.green,
         backgroundColor.blue,
       ],
-      'accentColor': [
+      "accentColor": [
         accentColor.red,
         accentColor.green,
         accentColor.blue,
       ],
-      'primaryColor': [
+      "primaryColor": [
         primaryColor.red,
         primaryColor.green,
         primaryColor.blue,
@@ -39,6 +39,8 @@ class SettingsModel extends Settings {
   }
 
   static SettingsModel toSettings(Map<String, dynamic> json) {
+    print('here json! $json');
+
     return SettingsModel(
       accentColor: Color.fromRGBO(
         json['accentColor'][0],

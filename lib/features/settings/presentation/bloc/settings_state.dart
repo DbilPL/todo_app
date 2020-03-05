@@ -1,16 +1,21 @@
 import 'package:equatable/equatable.dart';
+import 'package:todoapp/features/settings/data/models/settings_model.dart';
 
 abstract class SettingsState extends Equatable {
-  const SettingsState();
+  final SettingsModel settingsModel;
+
+  const SettingsState(this.settingsModel);
 }
 
 class InitialSettingsState extends SettingsState {
+  InitialSettingsState(SettingsModel settingsModel) : super(settingsModel);
+
   @override
   List<Object> get props => [];
 }
 
 abstract class FailureSettingsState extends SettingsState {
-  const FailureSettingsState();
+  const FailureSettingsState() : super(null);
 }
 
 class CacheFailureState extends FailureSettingsState {
@@ -23,6 +28,15 @@ class CacheFailureState extends FailureSettingsState {
 }
 
 class IntroductionAppState extends SettingsState {
+  IntroductionAppState(SettingsModel settingsModel) : super(settingsModel);
+
+  @override
+  List<Object> get props => [];
+}
+
+class LoadedState extends SettingsState {
+  LoadedState(SettingsModel settingsModel) : super(settingsModel);
+
   @override
   List<Object> get props => [];
 }

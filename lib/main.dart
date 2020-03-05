@@ -4,19 +4,23 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/features/settings/presentation/bloc/bloc.dart';
 
-import 'injection_container.dart' as di;
 import 'injection_container.dart';
+import 'injection_container.dart' as di;
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   // inits all instances from one point
   await di.init();
 
-  runApp(BlocProvider<SettingsBloc>(
-    child: MyApp(),
-    create: (BuildContext context) {
-      return sl<SettingsBloc>()..add(AppStarted());
-    },
-  ));
+  runApp(
+    BlocProvider<SettingsBloc>(
+      child: MyApp(),
+      create: (BuildContext context) {
+        return sl<SettingsBloc>()..add(AppStarted());
+      },
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -34,27 +38,42 @@ class _MyAppState extends State<MyApp> {
         systemNavigationBarColor: Color(0Xfff8f8f8),
         systemNavigationBarIconBrightness: Brightness.dark));
 
-    return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: BlocListener<SettingsBloc, SettingsState>(
-            listener: (BuildContext context, SettingsState state) {},
-            child: BlocBuilder<SettingsBloc, SettingsState>(
-              builder: (BuildContext context, SettingsState state) {
-                if (state is FailureSettingsState) {
-                  if (state is CacheFailureState) {
-                    return Text(state.error);
+    return BlocBuilder<SettingsBloc, SettingsState>(
+      builder: (BuildContext context, SettingsState state) {
+        return MaterialApp(
+          theme: ThemeData(
+              primaryColor: state.settingsModel.primaryColor,
+              backgroundColor: state.settingsModel.backgroundColor,
+              accentColor: state.settingsModel.accentColor),
+          debugShowCheckedModeBanner: false,
+          home: SafeArea(
+            child: Scaffold(
+              body: Builder(
+                builder: (BuildContext context) {
+                  print(state.runtimeType.toString());
+
+                  if (state is InitialSettingsState) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (state is IntroductionAppState) {
+                    return Stack(
+                      children: <Widget>[],
+                    );
+                  } else if (state is LoadedState) {
+                    return Center(
+                      child: Text('loaded'),
+                    );
                   } else
-                    return Text('0_0');
-                } else if (state is IntroductionAppState) {
-                  return Text('yay!');
-                } else
-                  return Text('._. ${state.runtimeType}');
-              },
+                    return Center(
+                      child: Text(state.runtimeType.toString()),
+                    );
+                },
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
