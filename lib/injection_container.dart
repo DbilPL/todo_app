@@ -10,6 +10,7 @@ final sl = GetIt.instance;
 
 Future<void> init() async {
   sl.registerSingleton(await SharedPreferences.getInstance());
+
   sl.registerSingleton(SettingsLocalDatasourceImpl(sl<SharedPreferences>()));
   sl.registerSingleton(
       LocalSettingsRepositoryImpl(sl<SettingsLocalDatasourceImpl>()));

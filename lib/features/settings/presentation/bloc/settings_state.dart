@@ -11,7 +11,7 @@ class InitialSettingsState extends SettingsState {
   InitialSettingsState(SettingsModel settingsModel) : super(settingsModel);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [settingsModel];
 }
 
 abstract class FailureSettingsState extends SettingsState {
@@ -31,12 +31,19 @@ class IntroductionAppState extends SettingsState {
   IntroductionAppState(SettingsModel settingsModel) : super(settingsModel);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [settingsModel];
+}
+
+class HowAppWorksState extends SettingsState {
+  HowAppWorksState(SettingsModel settingsModel) : super(settingsModel);
+
+  @override
+  List<Object> get props => [settingsModel];
 }
 
 class LoadedState extends SettingsState {
   LoadedState(SettingsModel settingsModel) : super(settingsModel);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [settingsModel];
 }

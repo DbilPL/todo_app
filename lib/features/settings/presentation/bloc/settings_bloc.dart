@@ -50,6 +50,16 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           print(e.toString());
         }
       }
+    } else if (state is HowAppWorks) {
+      print('yayayay');
+      final settingsOrFailure = await _getCurrentSettings(NoParams());
+      yield settingsOrFailure.fold((failure) {
+        print(failure.error);
+        return CacheFailureState('Something went wrong!');
+      }, (settings) {
+        print(settings == null);
+        return HowAppWorksState(settings);
+      });
     }
   }
 }

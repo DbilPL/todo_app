@@ -26,6 +26,15 @@ flutter:
 
   uses-material-design: true
 
+  assets:
+    - assets/fonts/Raleway-Regular.ttf
+
+
+  fonts:
+    - family: Raleway
+      fonts:
+        - asset: assets/fonts/Raleway-Regular.ttf
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg
