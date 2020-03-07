@@ -28,7 +28,13 @@ class TODOModel extends TODO {
       'title': title,
       'body': body,
       'isComplete': isComplete,
-      'date': date.toString(),
+      'date': [
+        date.year,
+        date.month,
+        date.hour,
+        date.minute,
+        date.second,
+      ],
     };
   }
 }

@@ -1,16 +1,17 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todoapp/features/todo/data/model/todo_global_model.dart';
+import 'package:todoapp/core/errors/exceptions.dart';
+import 'package:todoapp/features/todo/data/model/todo_list_model.dart';
 
 abstract class TODOLocalDatasource {
   /// Use [SharedPreferences] to get current [TODO] list
-  /// Returns [TODOGModel], if success, returns [CacheException] when something went wrong
-  TODOGModel getCurrentTODO();
+  /// Returns [TODOGroupModel], if success, returns [CacheException] when something went wrong
+  List<TODOGroupModel> getCurrentTODO();
 
   /// Use [SharedPreferences] to set [TODO] list
   /// Returns [CacheException] when something went wrong
-  Future<void> setCurrentTODO(TODOGModel todogModel);
+  Future<void> setCurrentTODO(List<TODOGroupModel> todogModel);
 }
 
 const String TODO_KEY = 'todo';
@@ -21,19 +22,29 @@ class TODOLocalDatasourceImpl implements TODOLocalDatasource {
   TODOLocalDatasourceImpl(this.storage);
 
   @override
-  TODOGModel getCurrentTODO() {
-    final todo = json.decode(storage.getString(TODO_KEY));
+  List<TODOGroupModel> getCurrentTODO() {
+    final List<TODOGroupModel> list = [];
+    final todo = storage.getStringList(TODO_KEY);
 
-    return TODOGModel.fromJSON(todo);
+    for (int i = 0; i < todo.length; i++) {
+      list.add(
+        TODOGroupModel.fromJson(
+          json.decode(todo[i]),
+        ),
+      );
+    }
+
+    return list;
   }
 
   @override
-  Future<void> setCurrentTODO(TODOGModel todogModel) async {
-    final Map<String, dynamic> todo = TODOGModel.toJSON(todogModel);
+  Future<void> setCurrentTODO(List<TODOGroupModel> todogModel) async {
+    final List<String> todo = List.generate(todogModel.length, (index) {
+      return json.encode(
+        TODOGroupModel.toJson(todogModel[index]),
+      );
+    });
 
-    await storage.setString(
-      TODO_KEY,
-      json.encode(todo),
-    );
+    await storage.setStringList(TODO_KEY, todo);
   }
 }

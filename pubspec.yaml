@@ -12,6 +12,8 @@ dependencies:
   equatable: ^1.1.1
   dartz: ^0.8.9
   get_it: ^4.0.0
+  firebase_auth: ^0.15.5+2
+  cloud_firestore: ^0.13.4+1
   flutter:
     sdk: flutter
 
