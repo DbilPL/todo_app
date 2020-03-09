@@ -17,3 +17,12 @@ class CacheFailure extends Failure {
   @override
   List<Object> get props => [error];
 }
+
+class FirebaseFailure extends Failure {
+  final String error;
+
+  FirebaseFailure(this.error);
+
+  @override
+  List<Object> get props => [error];
+}

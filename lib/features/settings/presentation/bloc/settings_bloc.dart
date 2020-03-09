@@ -26,39 +26,15 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   ) async* {
     if (event is AppStarted) {
       print('app started');
-
-      try {
-        final settingsOrFailure = await _getCurrentSettings(NoParams());
-        yield settingsOrFailure.fold((failure) {
-          print(failure.error);
-          return CacheFailureState('Something went wrong!');
-        }, (settings) {
-          print(settings == null);
-          return LoadedState(settings);
-        });
-      } catch (e) {
-        print(e);
-        try {
-          final setSettingsOrFailure = await _setSettings(settingsModelInitial);
-
-          yield setSettingsOrFailure.fold((failure) {
-            return CacheFailureState('Something went wrong!');
-          }, (success) {
-            return IntroductionAppState(settingsModelInitial);
-          });
-        } catch (e) {
-          print(e.toString());
-        }
-      }
-    } else if (state is HowAppWorks) {
-      print('yayayay');
       final settingsOrFailure = await _getCurrentSettings(NoParams());
       yield settingsOrFailure.fold((failure) {
         print(failure.error);
         return CacheFailureState('Something went wrong!');
       }, (settings) {
-        print(settings == null);
-        return HowAppWorksState(settings);
+        if (settings == null) {
+          return IntroductionAppState(settings);
+        } else
+          return LoadedState(settings);
       });
     }
   }

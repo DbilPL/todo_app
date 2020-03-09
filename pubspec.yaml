@@ -7,13 +7,19 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  # state management
   flutter_bloc: ^3.2.0
   shared_preferences: ^0.5.6+2
+  # dart support
   equatable: ^1.1.1
   dartz: ^0.8.9
+  # service locator
   get_it: ^4.0.0
+  # firebase
   firebase_auth: ^0.15.5+2
   cloud_firestore: ^0.13.4+1
+  # flare
+  flare_flutter: ^2.0.1
   flutter:
     sdk: flutter
 
@@ -30,6 +36,7 @@ flutter:
 
   assets:
     - assets/fonts/Raleway-Regular.ttf
+    - assets/animations/Logo.flr
 
 
   fonts:

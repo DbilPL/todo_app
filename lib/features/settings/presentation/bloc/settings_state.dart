@@ -34,13 +34,6 @@ class IntroductionAppState extends SettingsState {
   List<Object> get props => [settingsModel];
 }
 
-class HowAppWorksState extends SettingsState {
-  HowAppWorksState(SettingsModel settingsModel) : super(settingsModel);
-
-  @override
-  List<Object> get props => [settingsModel];
-}
-
 class LoadedState extends SettingsState {
   LoadedState(SettingsModel settingsModel) : super(settingsModel);
 
