@@ -12,12 +12,14 @@ class IntroductionBloc extends Bloc<IntroductionEvent, IntroductionState> {
   Stream<IntroductionState> mapEventToState(
     IntroductionEvent event,
   ) async* {
-    if (event is IntroduceApp) {
-      yield IntroduceAppState();
+    if (event is AppStart) {
+      yield AppStarted();
     }
-    if (state is EnterOrIntroduce) {
-      print('yay');
-      yield HowAppWorksState();
+    if (event is EnterOrIntroduce) {
+      yield EnterOrIntroduceState();
+    }
+    if (event is Introduce) {
+      yield IntroduceApp();
     }
   }
 }

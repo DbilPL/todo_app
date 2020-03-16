@@ -6,20 +6,27 @@ import 'package:todoapp/features/settings/domain/entities/settings.dart';
 class SettingsModel extends Settings {
   final Color backgroundColor, accentColor, primaryColor;
 
-  SettingsModel(
-      {@required this.backgroundColor,
-      @required this.accentColor,
-      @required this.primaryColor})
-      : super(
-            backgroundColor: backgroundColor,
-            accentColor: accentColor,
-            primaryColor: primaryColor);
+  final String fontFamily;
+
+  SettingsModel({
+    @required this.backgroundColor,
+    @required this.accentColor,
+    @required this.primaryColor,
+    @required this.fontFamily,
+  }) : super(
+          backgroundColor: backgroundColor,
+          accentColor: accentColor,
+          primaryColor: primaryColor,
+          fontFamily: fontFamily,
+        );
 
   @override
-  List<Object> get props => [backgroundColor, accentColor, primaryColor];
+  List<Object> get props =>
+      [backgroundColor, accentColor, primaryColor, fontFamily];
 
   Map<String, dynamic> toJSON() {
     return {
+      "fontFamily": fontFamily,
       "backgroundColor": [
         backgroundColor.red,
         backgroundColor.green,
@@ -42,6 +49,7 @@ class SettingsModel extends Settings {
     print('here json! $json');
 
     return SettingsModel(
+      fontFamily: json['fontFamily'],
       accentColor: Color.fromRGBO(
         json['accentColor'][0],
         json['accentColor'][1],

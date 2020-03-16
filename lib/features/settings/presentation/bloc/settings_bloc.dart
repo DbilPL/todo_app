@@ -12,9 +12,11 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final GetCurrentSettings _getCurrentSettings;
   final SetSettings _setSettings;
   final SettingsModel settingsModelInitial = SettingsModel(
-      backgroundColor: Colors.white,
-      accentColor: Colors.redAccent,
-      primaryColor: Colors.red);
+    backgroundColor: Colors.white,
+    accentColor: Colors.redAccent,
+    primaryColor: Colors.red,
+    fontFamily: 'Raleway',
+  );
   SettingsBloc(this._getCurrentSettings, this._setSettings);
 
   @override
@@ -24,18 +26,18 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   Stream<SettingsState> mapEventToState(
     SettingsEvent event,
   ) async* {
-    if (event is AppStarted) {
-      print('app started');
-      final settingsOrFailure = await _getCurrentSettings(NoParams());
-      yield settingsOrFailure.fold((failure) {
-        print(failure.error);
-        return CacheFailureState('Something went wrong!');
-      }, (settings) {
-        if (settings == null) {
-          return IntroductionAppState(settings);
-        } else
-          return LoadedState(settings);
-      });
+    if (event is LoadSettings) {
+      try {
+        final settings = await _getCurrentSettings(NoParams());
+        yield settings.fold((failure) {
+          return CacheFailureState(settingsModelInitial);
+        }, (settings) {
+          return AlreadyRunned(settings);
+        });
+      } catch (e) {
+        await _setSettings(settingsModelInitial);
+        yield FirstRunState(settingsModelInitial);
+      }
     }
   }
 }

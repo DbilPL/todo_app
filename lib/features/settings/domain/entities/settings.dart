@@ -6,16 +6,22 @@ import 'package:flutter/cupertino.dart';
 class Settings extends Equatable {
   final Color backgroundColor, accentColor, primaryColor;
 
-  Settings(
-      {@required this.backgroundColor,
-      @required this.accentColor,
-      @required this.primaryColor});
+  final String fontFamily;
+
+  Settings({
+    @required this.backgroundColor,
+    @required this.accentColor,
+    @required this.primaryColor,
+    @required this.fontFamily,
+  });
 
   @override
-  List<Object> get props => [backgroundColor, accentColor, primaryColor];
+  List<Object> get props =>
+      [backgroundColor, accentColor, primaryColor, fontFamily];
 
   Map<String, dynamic> toJSON() {
     return {
+      "fontFamily": fontFamily,
       'backgroundColor':
           '${backgroundColor.red} ${backgroundColor.green} ${backgroundColor.blue}',
       'accentColor':

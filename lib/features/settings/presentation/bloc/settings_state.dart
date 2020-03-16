@@ -14,29 +14,27 @@ class InitialSettingsState extends SettingsState {
   List<Object> get props => [settingsModel];
 }
 
+class FirstRunState extends SettingsState {
+  FirstRunState(SettingsModel settingsModel) : super(settingsModel);
+
+  @override
+  List<Object> get props => [settingsModel];
+}
+
+class AlreadyRunned extends SettingsState {
+  AlreadyRunned(SettingsModel settingsModel) : super(settingsModel);
+
+  @override
+  List<Object> get props => [settingsModel];
+}
+
+class CacheFailureState extends SettingsState {
+  CacheFailureState(SettingsModel settingsModel) : super(settingsModel);
+
+  @override
+  List<Object> get props => [settingsModel];
+}
+
 abstract class FailureSettingsState extends SettingsState {
   const FailureSettingsState() : super(null);
-}
-
-class CacheFailureState extends FailureSettingsState {
-  final String error;
-
-  CacheFailureState(this.error);
-
-  @override
-  List<Object> get props => [error];
-}
-
-class IntroductionAppState extends SettingsState {
-  IntroductionAppState(SettingsModel settingsModel) : super(settingsModel);
-
-  @override
-  List<Object> get props => [settingsModel];
-}
-
-class LoadedState extends SettingsState {
-  LoadedState(SettingsModel settingsModel) : super(settingsModel);
-
-  @override
-  List<Object> get props => [settingsModel];
 }
