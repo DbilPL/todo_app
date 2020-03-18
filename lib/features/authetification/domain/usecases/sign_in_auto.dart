@@ -5,13 +5,13 @@ import 'package:todoapp/features/authetification/data/model/user_model.dart';
 import 'package:todoapp/features/authetification/domain/repositories/firebase_auth_repository.dart';
 import 'package:todoapp/features/settings/domain/usecases/get_current_settings.dart';
 
-class SignInAnon extends UseCase<UserModel, NoParams> {
-  final FirebaseAuthRepository _authRepository;
+class SignInAuto extends UseCase<UsualUserModel, NoParams> {
+  final FirebaseAuthRepository repository;
 
-  SignInAnon(this._authRepository);
+  SignInAuto(this.repository);
 
   @override
-  Future<Either<Failure, UserModel>> call(NoParams params) async {
-    return await _authRepository.signInAnon();
+  Future<Either<Failure, UsualUserModel>> call(NoParams params) async {
+    return await repository.signInAuto();
   }
 }

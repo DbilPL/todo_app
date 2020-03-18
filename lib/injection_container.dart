@@ -3,7 +3,9 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todoapp/features/authetification/data/datasource/firebase_auth_datasource.dart';
 import 'package:todoapp/features/authetification/data/repositories/firebase_auth_repository_impl.dart';
-import 'package:todoapp/features/authetification/domain/usecases/sign_in_anon.dart';
+import 'package:todoapp/features/authetification/domain/usecases/register.dart';
+import 'package:todoapp/features/authetification/domain/usecases/sign_in_auto.dart';
+import 'package:todoapp/features/authetification/domain/usecases/sign_out.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_bloc.dart';
 import 'package:todoapp/features/introduction/presentation/bloc/bloc.dart';
 import 'package:todoapp/features/settings/data/datasource/settings_local_datasource.dart';
@@ -11,6 +13,8 @@ import 'package:todoapp/features/settings/data/repositories/local_settings_repos
 import 'package:todoapp/features/settings/domain/usecases/get_current_settings.dart';
 import 'package:todoapp/features/settings/domain/usecases/set_settings.dart';
 import 'package:todoapp/features/settings/presentation/bloc/bloc.dart';
+
+import 'features/authetification/domain/usecases/sign_in.dart';
 
 final sl = GetIt.instance;
 
@@ -36,9 +40,14 @@ Future<void> init() async {
   );
 
   /// auth
-  sl.registerSingleton(FirebaseAuthDatasourceImpl(sl<FirebaseAuth>()));
+  sl.registerSingleton(
+      FirebaseAuthDatasourceImpl(sl<FirebaseAuth>(), sl<SharedPreferences>()));
   sl.registerSingleton(
       FirebaseAuthRepositoryImpl(sl<FirebaseAuthDatasourceImpl>()));
-  sl.registerSingleton(SignInAnon(sl<FirebaseAuthRepositoryImpl>()));
-  sl.registerSingleton(AuthBloc(sl<SignInAnon>()));
+  sl.registerSingleton(SignOut(sl<FirebaseAuthRepositoryImpl>()));
+  sl.registerSingleton(SignIn(sl<FirebaseAuthRepositoryImpl>()));
+  sl.registerSingleton(Register(sl<FirebaseAuthRepositoryImpl>()));
+  sl.registerSingleton(SignInAuto(sl<FirebaseAuthRepositoryImpl>()));
+  sl.registerSingleton(
+      AuthBloc(sl<SignOut>(), sl<SignIn>(), sl<Register>(), sl<SignInAuto>()));
 }

@@ -10,6 +10,15 @@ class InitialAuthState extends AuthState {
   List<Object> get props => [];
 }
 
+class FailureState extends AuthState {
+  final String failure;
+
+  FailureState(this.failure);
+
+  @override
+  List<Object> get props => [failure];
+}
+
 class FirebaseFailureState extends AuthState {
   final String failure;
 
@@ -19,11 +28,35 @@ class FirebaseFailureState extends AuthState {
   List<Object> get props => [failure];
 }
 
-class SignedIn extends AuthState {
+class InputFailure extends AuthState {
+  final String failure;
+
+  InputFailure(this.failure);
+
+  @override
+  List<Object> get props => [];
+}
+
+class Entered extends AuthState {
   final UserModel user;
 
-  SignedIn(this.user);
+  Entered(this.user);
 
+  @override
+  List<Object> get props => [user];
+}
+
+class SignedOut extends AuthState {
+  @override
+  List<Object> get props => [];
+}
+
+class LoadingState extends AuthState {
+  @override
+  List<Object> get props => [];
+}
+
+class CreateAccountToNoAccountUserState extends AuthState {
   @override
   List<Object> get props => [];
 }

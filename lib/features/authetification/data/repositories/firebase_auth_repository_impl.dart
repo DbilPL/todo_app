@@ -11,22 +11,6 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   FirebaseAuthRepositoryImpl(this.firebaseAuthDatasourceImpl);
 
   @override
-  Future<Either<Failure, UserModel>> signInAnon() async {
-    if (await DataConnectionChecker().hasConnection) {
-      try {
-        final result = await firebaseAuthDatasourceImpl.signInAnon();
-        if (result == null)
-          return Left(FirebaseFailure('Something went wrong!'));
-        else
-          return Right(UserModel(uid: result.uid));
-      } catch (e) {
-        return Left(FirebaseFailure(e.toString()));
-      }
-    } else
-      return Left(FirebaseFailure('You have no connection to internet!'));
-  }
-
-  @override
   Future<Either<Failure, void>> signOut() async {
     if (await DataConnectionChecker().hasConnection) {
       try {
@@ -36,5 +20,49 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       }
     } else
       return Left(FirebaseFailure('You have no connection to internet!'));
+  }
+
+  @override
+  Future<Either<Failure, UsualUserModel>> signIn(
+      {String email, String password}) async {
+    if (await DataConnectionChecker().hasConnection) {
+      try {
+        final UsualUserModel user = await firebaseAuthDatasourceImpl.signIn(
+            email: email, password: password);
+
+        return Right(user);
+      } catch (e) {
+        return Left(FirebaseFailure('Wrong email or password!'));
+      }
+    } else
+      return Left(FirebaseFailure('You have no connection to internet!'));
+  }
+
+  @override
+  Future<Either<Failure, UsualUserModel>> register(
+      {String email, String password}) async {
+    if (await DataConnectionChecker().hasConnection) {
+      try {
+        final UsualUserModel user = await firebaseAuthDatasourceImpl.register(
+            email: email, password: password);
+
+        return Right(user);
+      } catch (e) {
+        return Left(FirebaseFailure(
+            'Something went wrong! (Maybe account with this params already exists)'));
+      }
+    } else
+      return Left(FirebaseFailure('You have no connection to internet!'));
+  }
+
+  @override
+  Future<Either<Failure, UsualUserModel>> signInAuto() async {
+    try {
+      final UsualUserModel user = await firebaseAuthDatasourceImpl.signInAuto();
+
+      return Right(user);
+    } catch (e) {
+      return Left(Failure(error: 'Something went wrong! ' + e.toString()));
+    }
   }
 }

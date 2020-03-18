@@ -3,11 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todoapp/features/authetification/presenation/bloc/bloc.dart';
 import 'package:todoapp/features/introduction/presentation/bloc/bloc.dart';
 import 'package:todoapp/features/settings/presentation/bloc/bloc.dart';
 
 import 'features/authetification/presenation/pages/auth_page.dart';
 import 'features/introduction/presentation/bloc/bloc.dart';
+import 'features/todo/presentation/pages/todo_page.dart';
 import 'injection_container.dart';
 import 'injection_container.dart' as di;
 
@@ -48,6 +50,9 @@ void main() async {
           create: (BuildContext context) =>
               sl<IntroductionBloc>()..add(AppStart()),
         ),
+        BlocProvider<AuthBloc>(
+          create: (context) => sl<AuthBloc>(),
+        )
       ],
       child: MyApp(),
     ),
@@ -91,6 +96,11 @@ class _MyAppState extends State<MyApp> {
               primaryColor: state.settingsModel.primaryColor,
               accentColor: state.settingsModel.accentColor,
               fontFamily: state.settingsModel.fontFamily,
+              textTheme: TextTheme(
+                button: TextStyle(
+                  color: state.settingsModel.backgroundColor,
+                ),
+              ),
             ),
             home: SafeArea(
               child: Scaffold(
@@ -125,159 +135,176 @@ class _MyAppState extends State<MyApp> {
             ),
             routes: {
               '/auth': (context) => AuthPage(),
-              // '/todo': (context) => TodoPage(),
+              '/todo': (context) => TodoPage(),
             },
             home: Scaffold(
               body: SafeArea(
-                child: BlocListener<SettingsBloc, SettingsState>(
-                  listener: (BuildContext context, state) {
-                    if (state is FirstRunState) {
-                      BlocProvider.of<IntroductionBloc>(context)
-                          .add(Introduce());
-                    }
-                    if (state is AlreadyRunned) {
+                child: BlocListener<AuthBloc, AuthState>(
+                  listener: (context, state) {
+                    if (state is FailureState) {
                       Navigator.pushReplacementNamed(context, '/auth');
                     }
+                    if (state is Entered) {
+                      Navigator.pushReplacementNamed(context, '/todo');
+                    }
                   },
-                  child: BlocListener<IntroductionBloc, IntroductionState>(
-                    listener:
-                        (BuildContext context, IntroductionState state) async {
-                      if (state is LoadedState) {
-                        print('print!');
+                  child: BlocListener<SettingsBloc, SettingsState>(
+                    listener: (BuildContext context, state) {
+                      if (state is FirstRunState) {
+                        BlocProvider.of<IntroductionBloc>(context)
+                            .add(Introduce());
                       }
-
-                      if (state is EnterOrIntroduceState) {
-                        BlocProvider.of<SettingsBloc>(context)
-                            .add(LoadSettings());
-                      }
-
-                      if (state is AppStarted) {
-                        await Future.delayed(Duration(seconds: 4), () {
-                          BlocProvider.of<IntroductionBloc>(context)
-                              .add(EnterOrIntroduce());
-                        });
+                      if (state is AlreadyRunned) {
+                        BlocProvider.of<AuthBloc>(context).add(UserEntered());
                       }
                     },
-                    child: BlocBuilder<IntroductionBloc, IntroductionState>(
-                      builder: (BuildContext context, IntroductionState state) {
-                        if (state is CacheFailureState) {
-                          return SizedBox(
-                            width: double.infinity,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                Text(
-                                  'Something went wrong!',
-                                  style: TextStyle(fontSize: 35),
-                                ),
-                                RaisedButton(
-                                  onPressed: () {
-                                    BlocProvider.of<IntroductionBloc>(context)
-                                        .add(AppStart());
-                                  },
-                                  color: Theme.of(context).primaryColor,
-                                  child: Text('Reload'),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                        if (state is AppStarted)
-                          return Center(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 36.0, top: 30.0),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: MediaQuery.of(context).size.width * 0.7,
-                                child: FlareActor(
-                                  'assets/animations/Logo.flr',
-                                  animation: 'animation',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          );
+                    child: BlocListener<IntroductionBloc, IntroductionState>(
+                      listener: (BuildContext context,
+                          IntroductionState state) async {
                         if (state is EnterOrIntroduceState) {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
+                          BlocProvider.of<SettingsBloc>(context)
+                              .add(LoadSettings());
                         }
-                        if (state is IntroduceApp) {
-                          return DefaultTabController(
-                            length: flareFilesData.length,
-                            initialIndex: 0,
-                            child: Builder(
-                              builder: (BuildContext context) => SizedBox(
-                                width: double.infinity,
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    TabPageSelector(),
-                                    Expanded(
-                                      child: TabBarView(
-                                        children: flareFilesData.map(
-                                          (val) {
-                                            return Center(
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.max,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Text(
-                                                    val['text'],
-                                                    style: TextStyle(
-                                                      fontSize: 35,
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width,
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width,
-                                                    child: FlareActor(
-                                                      'assets/animations/${val['name']}.flr',
-                                                      animation: 'animate',
-                                                    ),
-                                                  ),
-                                                  val['name'] == 'Intro3'
-                                                      ? RaisedButton(
-                                                          onPressed: () {
-                                                            Navigator
-                                                                .pushReplacementNamed(
-                                                                    context,
-                                                                    '/auth');
-                                                          },
-                                                          child: Text(
-                                                              'Start work'),
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
-                                                        )
-                                                      : Text(''),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        ).toList(),
-                                      ),
-                                    ),
-                                  ],
+
+                        if (state is AppStarted) {
+                          await Future.delayed(Duration(seconds: 4), () {
+                            BlocProvider.of<IntroductionBloc>(context)
+                                .add(EnterOrIntroduce());
+                          });
+                        }
+                      },
+                      child: BlocBuilder<IntroductionBloc, IntroductionState>(
+                        builder:
+                            (BuildContext context, IntroductionState state) {
+                          if (state is CacheFailureState) {
+                            return SizedBox(
+                              width: double.infinity,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  Text(
+                                    'Something went wrong!',
+                                    style: TextStyle(fontSize: 35),
+                                  ),
+                                  RaisedButton(
+                                    onPressed: () {
+                                      BlocProvider.of<IntroductionBloc>(context)
+                                          .add(AppStart());
+                                    },
+                                    color: Theme.of(context).primaryColor,
+                                    child: Text('Reload'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                          if (state is AppStarted)
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 36.0, top: 30.0),
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.7,
+                                  child: FlareActor(
+                                    'assets/animations/Logo.flr',
+                                    animation: 'animation',
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        } else
-                          return Container();
-                      },
+                            );
+                          if (state is EnterOrIntroduceState) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          if (state is IntroduceApp) {
+                            return DefaultTabController(
+                              length: flareFilesData.length,
+                              initialIndex: 0,
+                              child: Builder(
+                                builder: (BuildContext context) => SizedBox(
+                                  width: double.infinity,
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisSize: MainAxisSize.max,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      TabPageSelector(),
+                                      Expanded(
+                                        child: TabBarView(
+                                          children: flareFilesData.map(
+                                            (val) {
+                                              return Center(
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      val['text'],
+                                                      style: TextStyle(
+                                                        fontSize: 35,
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: FlareActor(
+                                                        'assets/animations/${val['name']}.flr',
+                                                        animation: 'animate',
+                                                      ),
+                                                    ),
+                                                    val['name'] == 'Intro3'
+                                                        ? RaisedButton(
+                                                            onPressed: () {
+                                                              Navigator
+                                                                  .pushReplacementNamed(
+                                                                      context,
+                                                                      '/auth');
+                                                            },
+                                                            child: Text(
+                                                              'Start work',
+                                                              style: TextStyle(
+                                                                color: Theme.of(
+                                                                        context)
+                                                                    .backgroundColor,
+                                                              ),
+                                                            ),
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .primaryColor,
+                                                          )
+                                                        : Text(''),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ).toList(),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          } else
+                            return Container();
+                        },
+                      ),
                     ),
                   ),
                 ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_bloc.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_event.dart';
+import 'package:todoapp/features/authetification/presenation/bloc/auth_state.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -21,57 +22,70 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Text(
-          'Sign in',
-          style: TextStyle(
-            fontSize: 35,
-          ),
-        ),
-        Expanded(
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: Icon(Icons.email),
-                ),
-              ),
-              TextFormField(
-                controller: _passswordController,
-                keyboardType: TextInputType.visiblePassword,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  prefixIcon: Icon(Icons.vpn_key),
-                ),
-              ),
-            ],
-          ),
-        ),
-        RaisedButton(
-          onPressed: () {},
-          child: Text(
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is Entered) {
+          _emailController.clear();
+          _passswordController.clear();
+        }
+      },
+      child: Column(
+        children: <Widget>[
+          Text(
             'Sign in',
-            style: TextStyle(color: Theme.of(context).backgroundColor),
+            style: TextStyle(
+              fontSize: 35,
+            ),
           ),
-          color: Theme.of(context).primaryColor,
-        ),
-        RaisedButton(
-          onPressed: () {
-            BlocProvider.of<AuthBloc>(context).add(SignInAnonEvent());
-          },
-          child: Text(
-            'Sign in anon',
-            style: TextStyle(color: Theme.of(context).backgroundColor),
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    prefixIcon: Icon(Icons.email),
+                  ),
+                ),
+                TextFormField(
+                  controller: _passswordController,
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    prefixIcon: Icon(Icons.vpn_key),
+                  ),
+                ),
+              ],
+            ),
           ),
-          color: Theme.of(context).primaryColor,
-        ),
-        Text('If you already have an account, sign in. (swipe down)'),
-        Icon(Icons.keyboard_arrow_down),
-      ],
+          RaisedButton(
+            onPressed: () {
+              BlocProvider.of<AuthBloc>(context).add(SignInEvent(
+                  _emailController.text, _passswordController.text));
+            },
+            child: Text(
+              'Sign in',
+              style: TextStyle(color: Theme.of(context).backgroundColor),
+            ),
+            color: Theme.of(context).primaryColor,
+          ),
+          RaisedButton(
+            onPressed: () {
+              BlocProvider.of<AuthBloc>(context)
+                  .add(EnterWithoutAccountEvent());
+            },
+            child: Text(
+              'Enter without account',
+              style: TextStyle(color: Theme.of(context).backgroundColor),
+            ),
+            color: Theme.of(context).primaryColor,
+          ),
+          Text('If you have no account, create it. (swipe down)'),
+          Icon(Icons.keyboard_arrow_down),
+        ],
+      ),
     );
   }
 }
