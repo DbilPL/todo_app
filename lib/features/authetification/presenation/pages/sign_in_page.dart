@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_bloc.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_event.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_state.dart';
+import 'package:todoapp/features/authetification/presenation/widgets/input.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -35,27 +36,25 @@ class _SignInPageState extends State<SignInPage> {
             'Sign in',
             style: TextStyle(
               fontSize: 35,
+              color: Theme.of(context).textTheme.caption.color,
             ),
           ),
           Expanded(
             child: Column(
               children: <Widget>[
-                TextFormField(
+                MyInput(
                   controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: Icon(Icons.email),
-                  ),
+                  labelText: 'Email',
+                  icon: Icon(Icons.email),
+                  textInputType: TextInputType.emailAddress,
+                  isObscure: false,
                 ),
-                TextFormField(
+                MyInput(
                   controller: _passswordController,
-                  keyboardType: TextInputType.visiblePassword,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: Icon(Icons.vpn_key),
-                  ),
+                  labelText: 'Password',
+                  icon: Icon(Icons.vpn_key),
+                  textInputType: TextInputType.visiblePassword,
+                  isObscure: true,
                 ),
               ],
             ),
@@ -67,23 +66,35 @@ class _SignInPageState extends State<SignInPage> {
             },
             child: Text(
               'Sign in',
-              style: TextStyle(color: Theme.of(context).backgroundColor),
+              style: TextStyle(
+                color: Theme.of(context).backgroundColor,
+              ),
             ),
             color: Theme.of(context).primaryColor,
           ),
           RaisedButton(
             onPressed: () {
               BlocProvider.of<AuthBloc>(context)
-                  .add(EnterWithoutAccountEvent());
+                  .add(EnterWithoutAccountEvent(false));
             },
             child: Text(
               'Enter without account',
-              style: TextStyle(color: Theme.of(context).backgroundColor),
+              style: TextStyle(
+                color: Theme.of(context).backgroundColor,
+              ),
             ),
             color: Theme.of(context).primaryColor,
           ),
-          Text('If you have no account, create it. (swipe down)'),
-          Icon(Icons.keyboard_arrow_down),
+          Text(
+            'If you have no account, create it. (swipe down)',
+            style: TextStyle(
+              color: Theme.of(context).textTheme.caption.color,
+            ),
+          ),
+          Icon(
+            Icons.keyboard_arrow_down,
+            color: Theme.of(context).textTheme.caption.color,
+          ),
         ],
       ),
     );

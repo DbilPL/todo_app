@@ -13,18 +13,74 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: BlocListener<AuthBloc, AuthState>(
-        listener: (BuildContext context, state) {
+        listener: (BuildContext context, state) async {
           if (state is Entered) {
             Navigator.of(context).pushReplacementNamed('/todo');
+          }
+
+          if (state is AreYouSureForEnteringWithoutAccount) {
+            print('sure?');
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(
+                    'Are you sure?',
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.caption.color,
+                    ),
+                  ),
+                  backgroundColor: Theme.of(context).backgroundColor,
+                  elevation: 0.0,
+                  content: Text(
+                    'You have connection to internet! If you will continue, your TODO will not save on cloud!',
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.caption.color,
+                    ),
+                  ),
+                  actions: <Widget>[
+                    // usually buttons at the bottom of the dialog
+                    FlatButton(
+                      color: Theme.of(context).backgroundColor,
+                      child: Text(
+                        'Continue',
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.caption.color,
+                        ),
+                      ),
+                      onPressed: () {
+                        BlocProvider.of(context)
+                            .add(EnterWithoutAccountEvent(true));
+                      },
+                    ),
+                    FlatButton(
+                      color: Theme.of(context).backgroundColor,
+                      child: Text(
+                        'Back',
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.caption.color,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
           }
 
           if (state is FailureState) {
             Scaffold.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  state.failure + ' Enter your data!',
-                  style: TextStyle(color: Theme.of(context).backgroundColor),
+                  state.failure,
+                  style: TextStyle(
+                    color: Theme.of(context).backgroundColor,
+                  ),
                 ),
                 backgroundColor: Colors.red,
                 duration: Duration(seconds: 2),
@@ -36,8 +92,10 @@ class _AuthPageState extends State<AuthPage> {
             Scaffold.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  state.failure + ' Try again!',
-                  style: TextStyle(color: Theme.of(context).backgroundColor),
+                  state.failure,
+                  style: TextStyle(
+                    color: Theme.of(context).backgroundColor,
+                  ),
                 ),
                 backgroundColor: Colors.red,
                 duration: Duration(seconds: 2),
@@ -49,7 +107,9 @@ class _AuthPageState extends State<AuthPage> {
               SnackBar(
                 content: Text(
                   state.failure + ' Try again!',
-                  style: TextStyle(color: Theme.of(context).backgroundColor),
+                  style: TextStyle(
+                    color: Theme.of(context).backgroundColor,
+                  ),
                 ),
                 backgroundColor: Colors.red,
                 duration: Duration(seconds: 2),

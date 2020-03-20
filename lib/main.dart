@@ -1,11 +1,14 @@
-import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/bloc.dart';
 import 'package:todoapp/features/introduction/presentation/bloc/bloc.dart';
+import 'package:todoapp/features/introduction/presentation/pages/introduction_page.dart';
+import 'package:todoapp/features/introduction/presentation/pages/on_failure-page.dart';
+import 'package:todoapp/features/introduction/presentation/pages/on_run_page.dart';
 import 'package:todoapp/features/settings/presentation/bloc/bloc.dart';
+import 'package:todoapp/features/settings/presentation/pages/settings_page.dart';
 
 import 'features/authetification/presenation/pages/auth_page.dart';
 import 'features/introduction/presentation/bloc/bloc.dart';
@@ -65,12 +68,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  static const flareFilesData = [
-    {'name': 'Intro1', 'text': 'Simple to use.'},
-    {'name': 'Intro2', 'text': 'Cloud saving'},
-    {'name': 'Intro3', 'text': 'Your data is save'},
-  ];
-
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations(
@@ -78,13 +75,6 @@ class _MyAppState extends State<MyApp> {
         DeviceOrientation.portraitDown,
         DeviceOrientation.portraitUp,
       ],
-    );
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: Color(0Xfff8f8f8),
-        systemNavigationBarIconBrightness: Brightness.dark,
-      ),
     );
 
     return BlocBuilder<SettingsBloc, SettingsState>(
@@ -96,31 +86,19 @@ class _MyAppState extends State<MyApp> {
               primaryColor: state.settingsModel.primaryColor,
               accentColor: state.settingsModel.accentColor,
               fontFamily: state.settingsModel.fontFamily,
+              canvasColor: state.settingsModel.primaryColor,
+              iconTheme: IconThemeData(
+                color: state.settingsModel.backgroundColor,
+              ),
               textTheme: TextTheme(
-                button: TextStyle(
-                  color: state.settingsModel.backgroundColor,
+                caption: TextStyle(
+                  color: state.settingsModel.fontColor,
                 ),
               ),
             ),
             home: SafeArea(
               child: Scaffold(
-                body: SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      Text('Something went wrong!'),
-                      RaisedButton(
-                        onPressed: () {
-                          BlocProvider.of<SettingsBloc>(context)
-                              .add(LoadSettings());
-                        },
-                        child: Text('Try again'),
-                      ),
-                    ],
-                  ),
-                ),
+                body: OnFailurePage(),
               ),
             ),
           );
@@ -132,15 +110,27 @@ class _MyAppState extends State<MyApp> {
               accentColor: state.settingsModel.accentColor,
               backgroundColor: state.settingsModel.backgroundColor,
               fontFamily: state.settingsModel.fontFamily,
+              iconTheme: IconThemeData(
+                color: state.settingsModel.backgroundColor,
+              ),
+              textTheme: TextTheme(
+                caption: TextStyle(
+                  color: state.settingsModel.fontColor,
+                ),
+              ),
             ),
             routes: {
               '/auth': (context) => AuthPage(),
               '/todo': (context) => TodoPage(),
+              '/settings': (context) => SettingsPage(),
             },
             home: Scaffold(
               body: SafeArea(
                 child: BlocListener<AuthBloc, AuthState>(
                   listener: (context, state) {
+                    if (state is FirebaseFailureState) {
+                      Navigator.pushReplacementNamed(context, '/auth');
+                    }
                     if (state is FailureState) {
                       Navigator.pushReplacementNamed(context, '/auth');
                     }
@@ -177,130 +167,19 @@ class _MyAppState extends State<MyApp> {
                         builder:
                             (BuildContext context, IntroductionState state) {
                           if (state is CacheFailureState) {
-                            return SizedBox(
-                              width: double.infinity,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: <Widget>[
-                                  Text(
-                                    'Something went wrong!',
-                                    style: TextStyle(fontSize: 35),
-                                  ),
-                                  RaisedButton(
-                                    onPressed: () {
-                                      BlocProvider.of<IntroductionBloc>(context)
-                                          .add(AppStart());
-                                    },
-                                    color: Theme.of(context).primaryColor,
-                                    child: Text('Reload'),
-                                  ),
-                                ],
-                              ),
-                            );
+                            return OnFailurePage();
                           }
-                          if (state is AppStarted)
-                            return Center(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 36.0, top: 30.0),
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height:
-                                      MediaQuery.of(context).size.width * 0.7,
-                                  child: FlareActor(
-                                    'assets/animations/Logo.flr',
-                                    animation: 'animation',
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            );
+                          if (state is AppStarted) return OnRunPage();
                           if (state is EnterOrIntroduceState) {
-                            return Center(
-                              child: CircularProgressIndicator(),
+                            return Container(
+                              color: Colors.grey,
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
                             );
                           }
                           if (state is IntroduceApp) {
-                            return DefaultTabController(
-                              length: flareFilesData.length,
-                              initialIndex: 0,
-                              child: Builder(
-                                builder: (BuildContext context) => SizedBox(
-                                  width: double.infinity,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    mainAxisSize: MainAxisSize.max,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      TabPageSelector(),
-                                      Expanded(
-                                        child: TabBarView(
-                                          children: flareFilesData.map(
-                                            (val) {
-                                              return Center(
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      val['text'],
-                                                      style: TextStyle(
-                                                        fontSize: 35,
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width,
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width,
-                                                      child: FlareActor(
-                                                        'assets/animations/${val['name']}.flr',
-                                                        animation: 'animate',
-                                                      ),
-                                                    ),
-                                                    val['name'] == 'Intro3'
-                                                        ? RaisedButton(
-                                                            onPressed: () {
-                                                              Navigator
-                                                                  .pushReplacementNamed(
-                                                                      context,
-                                                                      '/auth');
-                                                            },
-                                                            child: Text(
-                                                              'Start work',
-                                                              style: TextStyle(
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .backgroundColor,
-                                                              ),
-                                                            ),
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .primaryColor,
-                                                          )
-                                                        : Text(''),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ).toList(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
+                            return IntroducitonPage();
                           } else
                             return Container();
                         },

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:todoapp/features/authetification/data/model/user_model.dart';
 
 abstract class AuthEvent extends Equatable {
   const AuthEvent();
@@ -10,8 +11,12 @@ class UserEntered extends AuthEvent {
 }
 
 class EnterWithoutAccountEvent extends AuthEvent {
+  final bool areYouSure;
+
+  EnterWithoutAccountEvent(this.areYouSure);
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [areYouSure];
 }
 
 class CreateAccountToNoAccountUser extends AuthEvent {
@@ -38,6 +43,10 @@ class SignInEvent extends AuthEvent {
 }
 
 class SignOutEvent extends AuthEvent {
+  final UserModel user;
+
+  SignOutEvent(this.user);
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [user];
 }

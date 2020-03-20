@@ -15,7 +15,7 @@ dependencies:
   dartz: ^0.8.9
   data_connection_checker: ^0.3.4
   # service locator
-  get_it: ^4.0.0
+  get_it: ^4.0.1
   # firebase
   firebase_auth: ^0.15.5+2
   cloud_firestore: ^0.13.4+2

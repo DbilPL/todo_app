@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:todoapp/core/errors/failure.dart';
 import 'package:todoapp/features/authetification/data/model/user_model.dart';
 import 'package:todoapp/features/authetification/domain/usecases/register.dart';
 import 'package:todoapp/features/authetification/domain/usecases/sign_in.dart';
@@ -27,30 +29,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async* {
     yield LoadingState();
 
+    final RegExp emailRegExp = RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+
+    final RegExp spaces = RegExp(r"\s+\b|\b\s");
+
     if (event is UserEntered) {
       try {
         final signInAutoOrFailure = await signInAuto(NoParams());
 
         yield signInAutoOrFailure.fold((failure) {
-          print(failure.error);
-          return FailureState(failure.error);
+          if (failure is ConnectionFailure) {
+            return Entered(NoAccountUser());
+          } else
+            return FailureState(failure.error);
         }, (user) {
           return Entered(user);
         });
       } catch (e) {
         print(e.toString());
-        yield FailureState('Something went wrong!');
+        yield FirebaseFailureState('Something went wrong!');
       }
     }
 
     if (event is RegisterEvent) {
-      RegExp emailRegExp = RegExp(
-          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-
-      final password = event.password.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
-      final email = event.email.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
-      final repeatPassword =
-          event.repeatPassword.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+      final password = event.password.replaceAll(spaces, "");
+      final email = event.email.replaceAll(spaces, "");
+      final repeatPassword = event.repeatPassword.replaceAll(spaces, "");
       if (emailRegExp.hasMatch(email)) {
         if (password.length > 6) {
           if (password == repeatPassword) {
@@ -58,7 +63,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 await register(RegisterParams(email, password));
 
             yield signInOrFailure.fold((failure) {
-              return FirebaseFailureState(failure.error);
+              return FailureState(failure.error);
             }, (user) {
               print('registered');
               return Entered(user);
@@ -72,10 +77,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
 
     if (event is SignInEvent) {
-      RegExp emailRegExp = RegExp(
-          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-      final password = event.password.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
-      final email = event.email.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+      final password = event.password.replaceAll(spaces, "");
+      final email = event.email.replaceAll(spaces, "");
       if (emailRegExp.hasMatch(email)) {
         if (password.length > 6) {
           final signInOrFailure = await signIn(SignInParams(email, password));
@@ -97,19 +100,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final out = await signOut(NoParams());
 
         yield out.fold((failure) {
-          return FirebaseFailureState(failure.error);
+          return Entered(event.user,
+              error: 'Failed to sign out! Check your internet connection!');
         }, (_) {
           print('signed out');
           return SignedOut();
         });
       } catch (e) {
-        yield FirebaseFailureState('Something went wrong!');
+        yield Entered(event.user, error: 'Something went wrong!');
       }
     }
 
     if (event is EnterWithoutAccountEvent) {
       print('registered');
-      yield Entered(NoAccountUser());
+      if (!(await DataConnectionChecker().hasConnection) || event.areYouSure) {
+        yield Entered(NoAccountUser());
+      } else
+        yield AreYouSureForEnteringWithoutAccount();
     }
 
     if (event is CreateAccountToNoAccountUser) {

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_bloc.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_event.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_state.dart';
+import 'package:todoapp/features/authetification/presenation/widgets/input.dart';
 
 class LogInPage extends StatefulWidget {
   @override
@@ -38,36 +39,32 @@ class _LogInPageState extends State<LogInPage> {
             'Creating account',
             style: TextStyle(
               fontSize: 35,
+              color: Theme.of(context).textTheme.caption.color,
             ),
           ),
           Expanded(
             child: Column(
               children: <Widget>[
-                TextFormField(
+                MyInput(
+                  isObscure: false,
+                  textInputType: TextInputType.emailAddress,
+                  icon: Icon(Icons.email),
+                  labelText: 'Email',
                   controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: Icon(Icons.email),
-                  ),
                 ),
-                TextFormField(
+                MyInput(
+                  isObscure: true,
+                  textInputType: TextInputType.visiblePassword,
+                  icon: Icon(Icons.vpn_key),
+                  labelText: 'Password',
                   controller: _passwordController,
-                  keyboardType: TextInputType.visiblePassword,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: Icon(Icons.vpn_key),
-                  ),
                 ),
-                TextFormField(
+                MyInput(
+                  isObscure: true,
+                  textInputType: TextInputType.visiblePassword,
+                  icon: Icon(Icons.vpn_key),
+                  labelText: 'Repeat password',
                   controller: _repeatPasswordController,
-                  keyboardType: TextInputType.visiblePassword,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Repeat password',
-                    prefixIcon: Icon(Icons.vpn_key),
-                  ),
                 ),
               ],
             ),
@@ -82,7 +79,9 @@ class _LogInPageState extends State<LogInPage> {
             },
             child: Text(
               'Create account',
-              style: TextStyle(color: Theme.of(context).backgroundColor),
+              style: TextStyle(
+                color: Theme.of(context).backgroundColor,
+              ),
             ),
             color: Theme.of(context).primaryColor,
           ),

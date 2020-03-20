@@ -28,6 +28,11 @@ class FirebaseFailureState extends AuthState {
   List<Object> get props => [failure];
 }
 
+class AreYouSureForEnteringWithoutAccount extends AuthState {
+  @override
+  List<Object> get props => [];
+}
+
 class InputFailure extends AuthState {
   final String failure;
 
@@ -40,7 +45,9 @@ class InputFailure extends AuthState {
 class Entered extends AuthState {
   final UserModel user;
 
-  Entered(this.user);
+  final String error;
+
+  Entered(this.user, {this.error});
 
   @override
   List<Object> get props => [user];

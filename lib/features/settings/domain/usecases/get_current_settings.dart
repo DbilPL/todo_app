@@ -12,7 +12,7 @@ class GetCurrentSettings extends UseCase<SettingsModel, NoParams> {
 
   @override
   Future<Either<Failure, SettingsModel>> call(NoParams params) async =>
-      await localSettingsRepository.getCurrentSettings();
+      await localSettingsRepository.getCurrentLocalSavedSettings();
 }
 
 class NoParams extends Equatable {

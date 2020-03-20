@@ -15,6 +15,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     backgroundColor: Colors.white,
     accentColor: Colors.redAccent,
     primaryColor: Colors.red,
+    fontColor: Colors.black,
     fontFamily: 'Raleway',
   );
   SettingsBloc(this._getCurrentSettings, this._setSettings);
@@ -37,6 +38,19 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       } catch (e) {
         await _setSettings(settingsModelInitial);
         yield FirstRunState(settingsModelInitial);
+      }
+    }
+    if (event is SetBackgroundEvent) {
+      try {
+        final saveSettingsOrFailure = await _setSettings(event.settings);
+
+        yield saveSettingsOrFailure.fold((failure) {
+          return CacheFailureState(event.prevSettings);
+        }, (success) {
+          return SettingsUpdated(event.settings);
+        });
+      } catch (e) {
+        yield CacheFailureState(event.prevSettings);
       }
     }
   }

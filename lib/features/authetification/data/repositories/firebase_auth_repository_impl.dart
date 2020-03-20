@@ -9,7 +9,6 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   final FirebaseAuthDatasourceImpl firebaseAuthDatasourceImpl;
 
   FirebaseAuthRepositoryImpl(this.firebaseAuthDatasourceImpl);
-
   @override
   Future<Either<Failure, void>> signOut() async {
     if (await DataConnectionChecker().hasConnection) {
@@ -19,7 +18,8 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         return Left(FirebaseFailure('Something went wrong!'));
       }
     } else
-      return Left(FirebaseFailure('You have no connection to internet!'));
+      return Left(ConnectionFailure(
+          'You have no connection to internet! Check it and try again!'));
   }
 
   @override
@@ -35,7 +35,8 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         return Left(FirebaseFailure('Wrong email or password!'));
       }
     } else
-      return Left(FirebaseFailure('You have no connection to internet!'));
+      return Left(ConnectionFailure(
+          'You have no connection to internet! Check it and try again!'));
   }
 
   @override
@@ -52,17 +53,23 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
             'Something went wrong! (Maybe account with this params already exists)'));
       }
     } else
-      return Left(FirebaseFailure('You have no connection to internet!'));
+      return Left(ConnectionFailure(
+          'You have no connection to internet! Check it and try again!'));
   }
 
   @override
   Future<Either<Failure, UsualUserModel>> signInAuto() async {
-    try {
-      final UsualUserModel user = await firebaseAuthDatasourceImpl.signInAuto();
+    if (await DataConnectionChecker().hasConnection) {
+      try {
+        final UsualUserModel user =
+            await firebaseAuthDatasourceImpl.signInAuto();
 
-      return Right(user);
-    } catch (e) {
-      return Left(Failure(error: 'Something went wrong! ' + e.toString()));
-    }
+        return Right(user);
+      } catch (e) {
+        return Left(FirebaseFailure('Something went wrong!'));
+      }
+    } else
+      return Left(
+          ConnectionFailure('You have not connection to the internet!'));
   }
 }

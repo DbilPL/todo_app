@@ -11,6 +11,6 @@ class SetSettings extends UseCase<void, SettingsModel> {
 
   @override
   Future<Either<Failure, void>> call(SettingsModel params) async {
-    return await localSettingsRepository.setSettings(params);
+    return await localSettingsRepository.setSettingsLocally(params);
   }
 }

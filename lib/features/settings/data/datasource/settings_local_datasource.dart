@@ -23,11 +23,11 @@ import 'package:todoapp/features/todo/data/model/todo_model.dart';
 abstract class SettingsLocalDatasource {
   /// Uses [SharedPreferences] to get current settings
   /// Returns [SettingsModel], if success, returns [CacheException] when something went wrong
-  SettingsModel getCurrentSettings();
+  SettingsModel getCurrentLocallySavedSettings();
 
   /// Uses [SharedPreferences] to write new settings locally
   /// Returns [CacheException] when something went wrong
-  Future<void> setSettings(SettingsModel settingsModel);
+  Future<void> setSettingsLocally(SettingsModel settingsModel);
 }
 
 const SETTINGS_KEY = 'settings';
@@ -38,18 +38,19 @@ class SettingsLocalDatasourceImpl extends SettingsLocalDatasource {
   SettingsLocalDatasourceImpl(this.storage);
 
   @override
-  SettingsModel getCurrentSettings() {
+  SettingsModel getCurrentLocallySavedSettings() {
     final settings = storage.getString(SETTINGS_KEY);
-
-    print(settings);
 
     return SettingsModel.toSettings(json.decode(settings));
   }
 
   @override
-  Future<void> setSettings(SettingsModel settingsModel) async {
-    print(settingsModel.toJSON().toString());
-    await storage.setString(SETTINGS_KEY, json.encode(settingsModel.toJSON()));
-    print(getCurrentSettings());
+  Future<void> setSettingsLocally(SettingsModel settingsModel) async {
+    await storage.setString(
+      SETTINGS_KEY,
+      json.encode(
+        settingsModel.toJSON(),
+      ),
+    );
   }
 }

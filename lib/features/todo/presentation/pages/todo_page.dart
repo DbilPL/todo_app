@@ -21,51 +21,182 @@ class _TodoPageState extends State<TodoPage> {
           if (state is SignedOut) {
             Navigator.of(context).pushReplacementNamed('/auth');
           }
-          if (state is FirebaseFailureState) {}
         },
         child: BlocBuilder<AuthBloc, AuthState>(
+          // ignore: missing_return
           builder: (context, state) {
             if (state is Entered) {
-              print(state.user is UsualUserModel);
               if (state.user is UsualUserModel) {
                 return Scaffold(
-                  drawer: Drawer(
-                    child: ListView(
-                      children: <Widget>[
-                        UserAccountsDrawerHeader(
-                          accountName: Text(''),
-                          accountEmail: Text(state.user.email),
+                  backgroundColor: Theme.of(context).backgroundColor,
+                  appBar: AppBar(
+                    elevation: 0.0,
+                    iconTheme: Theme.of(context).iconTheme,
+                    title: Text(
+                      'TODO',
+                      style: TextStyle(
+                        color: Theme.of(context).backgroundColor,
+                      ),
+                    ),
+                  ),
+                  drawer: BlocListener<AuthBloc, AuthState>(
+                    listener: (context, state) {
+                      if (state is Entered) {
+                        if (state.error != null) {
+                          Navigator.of(context).pop();
+                          Scaffold.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                state.error,
+                                style: TextStyle(
+                                  color: Theme.of(context).backgroundColor,
+                                ),
+                              ),
+                              backgroundColor: Colors.red,
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    child: Drawer(
+                      elevation: 0.0,
+                      child: Container(
+                        color: Theme.of(context).backgroundColor,
+                        child: ListView(
+                          children: <Widget>[
+                            UserAccountsDrawerHeader(
+                              accountName: Text(''),
+                              accountEmail: Text(
+                                state.user.props[1],
+                                style: TextStyle(
+                                  color: Theme.of(context).backgroundColor,
+                                ),
+                              ),
+                            ),
+                            ListTile(
+                              title: Text(
+                                'Settings',
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).textTheme.caption.color,
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.pushReplacementNamed(
+                                    context, '/settings');
+                              },
+                            ),
+                            ListTile(
+                              title: Text(
+                                'Delete all TODO',
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).textTheme.caption.color,
+                                ),
+                              ),
+                              onTap: () {},
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24),
+                              child: RaisedButton(
+                                onPressed: () {
+                                  BlocProvider.of<AuthBloc>(context)
+                                      .add(SignOutEvent(state.user));
+                                },
+                                color: Theme.of(context).primaryColor,
+                                child: Text(
+                                  'Sign out',
+                                  style: TextStyle(
+                                    color: Theme.of(context).backgroundColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        RaisedButton(
-                          onPressed: () {
-                            BlocProvider.of<AuthBloc>(context)
-                                .add(SignOutEvent());
-                          },
-                          child: Text('Sign out'),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 );
-              } else
+              } else {
                 return Scaffold(
+                  backgroundColor: Theme.of(context).backgroundColor,
+                  appBar: AppBar(
+                    iconTheme: Theme.of(context).iconTheme,
+                    title: Text(
+                      'TODO',
+                      style: TextStyle(
+                        color: Theme.of(context).backgroundColor,
+                      ),
+                    ),
+                  ),
                   drawer: Drawer(
-                    child: ListView(
-                      children: <Widget>[
-                        RaisedButton(
-                          onPressed: () {
-                            BlocProvider.of<AuthBloc>(context)
-                                .add(CreateAccountToNoAccountUser());
-                          },
-                          child: Text('Create account'),
-                        ),
-                      ],
+                    child: Container(
+                      color: Theme.of(context).backgroundColor,
+                      child: ListView(
+                        children: <Widget>[
+                          UserAccountsDrawerHeader(
+                            accountName: Text(''),
+                            accountEmail: Text(
+                              'Anoniymous',
+                              style: TextStyle(
+                                color: Theme.of(context).backgroundColor,
+                              ),
+                            ),
+                          ),
+                          ListTile(
+                            title: Text(
+                              'Settings',
+                              style: TextStyle(
+                                color:
+                                    Theme.of(context).textTheme.caption.color,
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.pushReplacementNamed(
+                                  context, '/settings');
+                            },
+                          ),
+                          ListTile(
+                            title: Text(
+                              'Delete all TODO',
+                              style: TextStyle(
+                                color:
+                                    Theme.of(context).textTheme.caption.color,
+                              ),
+                            ),
+                            onTap: () {},
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: RaisedButton(
+                              onPressed: () {
+                                BlocProvider.of<AuthBloc>(context)
+                                    .add(CreateAccountToNoAccountUser());
+                              },
+                              color: Theme.of(context).primaryColor,
+                              child: Text(
+                                'Create account',
+                                style: TextStyle(
+                                  color: Theme.of(context).backgroundColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
+              }
             } else
-              return Center(
-                child: CircularProgressIndicator(),
+              return Scaffold(
+                backgroundColor: Theme.of(context).backgroundColor,
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
               );
           },
         ),

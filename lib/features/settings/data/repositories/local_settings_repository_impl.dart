@@ -11,9 +11,10 @@ class LocalSettingsRepositoryImpl extends LocalSettingsRepository {
   LocalSettingsRepositoryImpl(this.localDatasourceImpl);
 
   @override
-  Future<Either<Failure, SettingsModel>> getCurrentSettings() async {
+  Future<Either<Failure, SettingsModel>> getCurrentLocalSavedSettings() async {
     try {
-      final settings = await localDatasourceImpl.getCurrentSettings();
+      final settings =
+          await localDatasourceImpl.getCurrentLocallySavedSettings();
       return Right(settings);
     } on CacheException {
       return Left(CacheFailure('Something went wrong'));
@@ -21,9 +22,9 @@ class LocalSettingsRepositoryImpl extends LocalSettingsRepository {
   }
 
   @override
-  Future<Either<Failure, void>> setSettings(SettingsModel params) async {
+  Future<Either<Failure, void>> setSettingsLocally(SettingsModel params) async {
     try {
-      final set = await localDatasourceImpl.setSettings(params);
+      final set = await localDatasourceImpl.setSettingsLocally(params);
       return Right(set);
     } on CacheException {
       return Left(CacheFailure('Something went wrong'));

@@ -14,6 +14,13 @@ class InitialSettingsState extends SettingsState {
   List<Object> get props => [settingsModel];
 }
 
+class SettingsUpdated extends SettingsState {
+  SettingsUpdated(SettingsModel settingsModel) : super(settingsModel);
+
+  @override
+  List<Object> get props => [settingsModel];
+}
+
 class FirstRunState extends SettingsState {
   FirstRunState(SettingsModel settingsModel) : super(settingsModel);
 

@@ -26,3 +26,12 @@ class FirebaseFailure extends Failure {
   @override
   List<Object> get props => [error];
 }
+
+class ConnectionFailure extends Failure {
+  final String error;
+
+  ConnectionFailure(this.error);
+
+  @override
+  List<Object> get props => [error];
+}
