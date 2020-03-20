@@ -6,6 +6,7 @@ import 'package:todoapp/features/authetification/presenation/bloc/bloc.dart';
 import 'package:todoapp/features/settings/data/models/settings_model.dart';
 import 'package:todoapp/features/settings/presentation/bloc/bloc.dart';
 import 'package:todoapp/features/settings/presentation/widgets/color_circle.dart';
+import 'package:todoapp/features/settings/presentation/widgets/font_viewer.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -63,11 +64,10 @@ class _SettingsPageState extends State<SettingsPage> {
                             backgroundColor: Colors.white,
                             fontFamily: state.settingsModel.fontFamily,
                             primaryColor: state.settingsModel.primaryColor,
-                            accentColor: state.settingsModel.accentColor,
                           );
 
                           BlocProvider.of<SettingsBloc>(context).add(
-                              SetBackgroundEvent(
+                              SetSettingsEvent(
                                   newSettings, state.settingsModel));
                         },
                       ),
@@ -79,20 +79,106 @@ class _SettingsPageState extends State<SettingsPage> {
                             backgroundColor: Colors.black,
                             fontFamily: state.settingsModel.fontFamily,
                             primaryColor: state.settingsModel.primaryColor,
-                            accentColor: state.settingsModel.accentColor,
                           );
 
                           BlocProvider.of<SettingsBloc>(context).add(
-                              SetBackgroundEvent(
+                              SetSettingsEvent(
                                   newSettings, state.settingsModel));
                         },
                       ),
                     ]
                         .map((widget) => Padding(
-                              padding: const EdgeInsets.only(left: 16.0),
+                              padding: const EdgeInsets.only(left: 12.0),
                               child: widget,
                             ))
                         .toList(),
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Primary color',
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.caption.color,
+                      ),
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        Colors.black,
+                        Colors.white,
+                        Colors.grey,
+                        Colors.red,
+                        Colors.orange,
+                        Colors.yellow,
+                        Colors.green,
+                        Colors.blue,
+                        Colors.purple,
+                        Colors.pink,
+                      ].map((val) {
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 12.0),
+                          child: ColorCircle(
+                            color: val,
+                            onPressed: () {
+                              BlocProvider.of<SettingsBloc>(context)
+                                  .add(SetSettingsEvent(
+                                      SettingsModel(
+                                        primaryColor: val,
+                                        backgroundColor:
+                                            state.settingsModel.backgroundColor,
+                                        fontColor:
+                                            state.settingsModel.fontColor,
+                                        fontFamily:
+                                            state.settingsModel.fontFamily,
+                                      ),
+                                      state.settingsModel));
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Font family',
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.caption.color,
+                      ),
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        'Raleway',
+                        'Abel',
+                        'BalooChettan2',
+                        'Handlee',
+                        'Montserrat',
+                        'NanumPenScript',
+                        'OpenSansCondensed',
+                        'Sen',
+                        'TitanOne',
+                      ].map<Widget>((val) {
+                        return FontViewer(
+                          font: val,
+                          onTap: () {
+                            BlocProvider.of<SettingsBloc>(context)
+                                .add(SetSettingsEvent(
+                                    SettingsModel(
+                                      backgroundColor:
+                                          state.settingsModel.backgroundColor,
+                                      fontColor: state.settingsModel.fontColor,
+                                      primaryColor:
+                                          state.settingsModel.primaryColor,
+                                      fontFamily: val,
+                                    ),
+                                    state.settingsModel));
+                          },
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ],
               );

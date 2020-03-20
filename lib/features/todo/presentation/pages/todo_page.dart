@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/features/authetification/data/model/user_model.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_state.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/bloc.dart';
+import 'package:todoapp/features/todo/presentation/widgets/anonyn_todo_list.dart';
+import 'package:todoapp/features/todo/presentation/widgets/registered_todo_list.dart';
 
 class TodoPage extends StatefulWidget {
   @override
@@ -119,6 +121,7 @@ class _TodoPageState extends State<TodoPage> {
                       ),
                     ),
                   ),
+                  body: RegisteredTODOList(),
                 );
               } else {
                 return Scaffold(
@@ -178,7 +181,7 @@ class _TodoPageState extends State<TodoPage> {
                               },
                               color: Theme.of(context).primaryColor,
                               child: Text(
-                                'Create account',
+                                'Log in',
                                 style: TextStyle(
                                   color: Theme.of(context).backgroundColor,
                                 ),
@@ -189,13 +192,17 @@ class _TodoPageState extends State<TodoPage> {
                       ),
                     ),
                   ),
+                  body: AnonymousTodoList(),
                 );
               }
             } else
               return Scaffold(
                 backgroundColor: Theme.of(context).backgroundColor,
                 body: Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor),
+                  ),
                 ),
               );
           },

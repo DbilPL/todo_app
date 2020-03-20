@@ -10,12 +10,12 @@ class LoadSettings extends SettingsEvent {
   List<Object> get props => [];
 }
 
-class SetBackgroundEvent extends SettingsEvent {
+class SetSettingsEvent extends SettingsEvent {
   final SettingsModel settings;
   final SettingsModel prevSettings;
 
-  SetBackgroundEvent(this.settings, this.prevSettings);
+  SetSettingsEvent(this.settings, this.prevSettings);
 
   @override
-  List<Object> get props => [settings];
+  List<Object> get props => [settings, prevSettings];
 }

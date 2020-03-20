@@ -120,7 +120,10 @@ class _AuthPageState extends State<AuthPage> {
         child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
           if (state is LoadingState)
             return Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).primaryColor),
+              ),
             );
           else
             return SafeArea(

@@ -17,7 +17,7 @@ dependencies:
   # service locator
   get_it: ^4.0.1
   # firebase
-  firebase_auth: ^0.15.5+2
+  firebase_auth: ^0.15.5+3
   cloud_firestore: ^0.13.4+2
   # flare
   flare_flutter: ^2.0.1
@@ -38,6 +38,14 @@ flutter:
 
   assets:
     - assets/fonts/Raleway-Regular.ttf
+    - assets/fonts/Abel-Regular.ttf
+    - assets/fonts/BalooChettan2-Regular.ttf
+    - assets/fonts/Handlee-Regular.ttf
+    - assets/fonts/Montserrat-Regular.ttf
+    - assets/fonts/NanumPenScript-Regular.ttf
+    - assets/fonts/OpenSansCondensed-Light.ttf
+    - assets/fonts/Sen-Regular.ttf
+    - assets/fonts/TitanOne-Regular.ttf
     - assets/animations/Logo.flr
     - assets/animations/Intro1.flr
     - assets/animations/Intro2.flr
@@ -48,6 +56,30 @@ flutter:
     - family: Raleway
       fonts:
         - asset: assets/fonts/Raleway-Regular.ttf
+    - family: Abel
+      fonts:
+          - asset: assets/fonts/Abel-Regular.ttf
+    - family: BalooChettan2
+      fonts:
+          - asset: assets/fonts/BalooChettan2-Regular.ttf
+    - family: Handlee
+      fonts:
+          - asset: assets/fonts/Handlee-Regular.ttf
+    - family: Montserrat
+      fonts:
+          - asset: assets/fonts/Montserrat-Regular.ttf
+    - family: NanumPenScript
+      fonts:
+          - asset: assets/fonts/NanumPenScript-Regular.ttf
+    - family: OpenSansCondensed
+      fonts:
+          - asset: assets/fonts/OpenSansCondensed-Light.ttf
+    - family: Sen
+      fonts:
+          - asset: assets/fonts/Sen-Regular.ttf
+    - family: TitanOne
+      fonts:
+          - asset: assets/fonts/TitanOne-Regular.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

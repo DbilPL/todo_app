@@ -4,19 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:todoapp/features/settings/domain/entities/settings.dart';
 
 class SettingsModel extends Settings {
-  final Color backgroundColor, accentColor, primaryColor, fontColor;
+  final Color backgroundColor, primaryColor, fontColor;
 
   final String fontFamily;
 
   SettingsModel({
     @required this.backgroundColor,
-    @required this.accentColor,
     @required this.primaryColor,
     @required this.fontColor,
     @required this.fontFamily,
   }) : super(
           backgroundColor: backgroundColor,
-          accentColor: accentColor,
           primaryColor: primaryColor,
           fontColor: fontColor,
           fontFamily: fontFamily,
@@ -24,7 +22,7 @@ class SettingsModel extends Settings {
 
   @override
   List<Object> get props =>
-      [backgroundColor, accentColor, primaryColor, fontColor, fontFamily];
+      [backgroundColor, primaryColor, fontColor, fontFamily];
 
   Map<String, dynamic> toJSON() {
     return {
@@ -33,11 +31,6 @@ class SettingsModel extends Settings {
         backgroundColor.red,
         backgroundColor.green,
         backgroundColor.blue,
-      ],
-      "accentColor": [
-        accentColor.red,
-        accentColor.green,
-        accentColor.blue,
       ],
       "primaryColor": [
         primaryColor.red,
@@ -55,12 +48,6 @@ class SettingsModel extends Settings {
   static SettingsModel toSettings(Map<String, dynamic> json) {
     return SettingsModel(
       fontFamily: json['fontFamily'],
-      accentColor: Color.fromRGBO(
-        json['accentColor'][0],
-        json['accentColor'][1],
-        json['accentColor'][2],
-        1,
-      ),
       backgroundColor: Color.fromRGBO(
         json['backgroundColor'][0],
         json['backgroundColor'][1],

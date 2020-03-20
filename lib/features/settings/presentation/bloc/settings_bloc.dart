@@ -13,7 +13,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final SetSettings _setSettings;
   final SettingsModel settingsModelInitial = SettingsModel(
     backgroundColor: Colors.white,
-    accentColor: Colors.redAccent,
     primaryColor: Colors.red,
     fontColor: Colors.black,
     fontFamily: 'Raleway',
@@ -40,7 +39,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         yield FirstRunState(settingsModelInitial);
       }
     }
-    if (event is SetBackgroundEvent) {
+    if (event is SetSettingsEvent) {
       try {
         final saveSettingsOrFailure = await _setSettings(event.settings);
 

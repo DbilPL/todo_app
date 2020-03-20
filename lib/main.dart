@@ -84,7 +84,6 @@ class _MyAppState extends State<MyApp> {
             theme: ThemeData(
               backgroundColor: state.settingsModel.backgroundColor,
               primaryColor: state.settingsModel.primaryColor,
-              accentColor: state.settingsModel.accentColor,
               fontFamily: state.settingsModel.fontFamily,
               canvasColor: state.settingsModel.primaryColor,
               iconTheme: IconThemeData(
@@ -107,7 +106,6 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               primaryColor: state.settingsModel.primaryColor,
-              accentColor: state.settingsModel.accentColor,
               backgroundColor: state.settingsModel.backgroundColor,
               fontFamily: state.settingsModel.fontFamily,
               iconTheme: IconThemeData(
@@ -172,9 +170,12 @@ class _MyAppState extends State<MyApp> {
                           if (state is AppStarted) return OnRunPage();
                           if (state is EnterOrIntroduceState) {
                             return Container(
-                              color: Colors.grey,
+                              color: Theme.of(context).backgroundColor,
                               child: Center(
-                                child: CircularProgressIndicator(),
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Theme.of(context).primaryColor),
+                                ),
                               ),
                             );
                           }
