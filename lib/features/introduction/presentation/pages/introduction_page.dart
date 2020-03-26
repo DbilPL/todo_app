@@ -26,7 +26,9 @@ class _IntroducitonPageState extends State<IntroducitonPage> {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              TabPageSelector(),
+              TabPageSelector(
+                selectedColor: Theme.of(context).primaryColor,
+              ),
               Expanded(
                 child: TabBarView(
                   children: flareFilesData.map(

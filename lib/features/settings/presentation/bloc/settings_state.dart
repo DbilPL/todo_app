@@ -14,8 +14,22 @@ class InitialSettingsState extends SettingsState {
   List<Object> get props => [settingsModel];
 }
 
+class LoadingSettingsState extends SettingsState {
+  LoadingSettingsState(SettingsModel settingsModel) : super(settingsModel);
+
+  @override
+  List<Object> get props => [settingsModel];
+}
+
 class SettingsUpdated extends SettingsState {
   SettingsUpdated(SettingsModel settingsModel) : super(settingsModel);
+
+  @override
+  List<Object> get props => [settingsModel];
+}
+
+class ConnectionFailureState extends SettingsState {
+  ConnectionFailureState(SettingsModel settingsModel) : super(settingsModel);
 
   @override
   List<Object> get props => [settingsModel];

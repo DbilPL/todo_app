@@ -63,6 +63,16 @@ class LoadingState extends AuthState {
   List<Object> get props => [];
 }
 
+class ConnectionFailureTODOState extends AuthState {
+  @override
+  List<Object> get props => [];
+}
+
+class FirebaseFailureTODOState extends AuthState {
+  @override
+  List<Object> get props => [];
+}
+
 class CreateAccountToNoAccountUserState extends AuthState {
   @override
   List<Object> get props => [];

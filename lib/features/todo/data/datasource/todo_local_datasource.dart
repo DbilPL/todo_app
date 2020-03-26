@@ -23,15 +23,17 @@ class TODOLocalDatasourceImpl implements TODOLocalDatasource {
 
   @override
   List<TODOGroupModel> getCurrentTODO() {
-    final List<TODOGroupModel> list = [];
+    List<TODOGroupModel> list = [];
     final todo = storage.getStringList(TODO_KEY);
 
-    for (int i = 0; i < todo.length; i++) {
-      list.add(
-        TODOGroupModel.fromJson(
-          json.decode(todo[i]),
-        ),
-      );
+    if (todo != null) {
+      for (int i = 0; i < todo.length; i++) {
+        list.add(
+          TODOGroupModel.fromJson(
+            json.decode(todo[i]),
+          ),
+        );
+      }
     }
 
     return list;
@@ -39,11 +41,21 @@ class TODOLocalDatasourceImpl implements TODOLocalDatasource {
 
   @override
   Future<void> setCurrentTODO(List<TODOGroupModel> todogModel) async {
-    final List<String> todo = List.generate(todogModel.length, (index) {
-      return json.encode(
-        TODOGroupModel.toJson(todogModel[index]),
-      );
-    });
+    print(todogModel.length);
+
+    List<String> todo = List.generate(
+      todogModel.length,
+      (index) {
+        print(index);
+        return json.encode(
+          todogModel[index].toJson(),
+        );
+      },
+    );
+
+    print('set');
+
+    print(todo);
 
     await storage.setStringList(TODO_KEY, todo);
   }

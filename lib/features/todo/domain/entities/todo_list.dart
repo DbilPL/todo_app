@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
-import 'package:todoapp/features/todo/domain/entities/todo.dart';
+import 'package:todoapp/features/todo/data/model/todo_model.dart';
 
 class TODOList extends Equatable {
   final String groupName;
 
-  final List<TODO> todoList;
+  final List<TODOModel> todoList;
 
   TODOList(this.groupName, this.todoList);
 

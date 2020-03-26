@@ -8,7 +8,7 @@ import 'package:todoapp/features/authetification/domain/usecases/register.dart';
 import 'package:todoapp/features/authetification/domain/usecases/sign_in.dart';
 import 'package:todoapp/features/authetification/domain/usecases/sign_in_auto.dart';
 import 'package:todoapp/features/authetification/domain/usecases/sign_out.dart';
-import 'package:todoapp/features/settings/domain/usecases/get_current_settings.dart';
+import 'package:todoapp/features/settings/domain/usecases/get_current_settings_local.dart';
 
 import './bloc.dart';
 
@@ -18,7 +18,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final Register register;
   final SignInAuto signInAuto;
 
-  AuthBloc(this.signOut, this.signIn, this.register, this.signInAuto);
+  AuthBloc(
+    this.signOut,
+    this.signIn,
+    this.register,
+    this.signInAuto,
+  );
 
   @override
   AuthState get initialState => InitialAuthState();
@@ -40,15 +45,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         yield signInAutoOrFailure.fold((failure) {
           if (failure is ConnectionFailure) {
+            print('sign in auto with no internet');
             return Entered(NoAccountUser());
           } else
             return FailureState(failure.error);
         }, (user) {
+          print('sign in auto');
           return Entered(user);
         });
       } catch (e) {
         print(e.toString());
-        yield FirebaseFailureState('Something went wrong!');
+        yield FailureState('Something went wrong!');
       }
     }
 
@@ -86,7 +93,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           yield signInOrFailure.fold((failure) {
             return FirebaseFailureState(failure.error);
           }, (user) {
-            print('registered');
+            print('sign in');
             return Entered(user);
           });
         } else

@@ -27,7 +27,6 @@ class TODO extends Equatable {
         date.month,
         date.hour,
         date.minute,
-        date.second,
       ],
     };
   }

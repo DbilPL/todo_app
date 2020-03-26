@@ -47,11 +47,11 @@ class _AuthPageState extends State<AuthPage> {
                       child: Text(
                         'Continue',
                         style: TextStyle(
-                          color: Theme.of(context).textTheme.caption.color,
+                          color: Theme.of(context).primaryColor,
                         ),
                       ),
                       onPressed: () {
-                        BlocProvider.of(context)
+                        BlocProvider.of<AuthBloc>(context)
                             .add(EnterWithoutAccountEvent(true));
                       },
                     ),

@@ -23,18 +23,35 @@ class TODOModel extends TODO {
   @override
   List<Object> get props => [title, body, date, isComplete];
 
+  static TODOModel fromJson(Map<String, dynamic> json) {
+    return TODOModel(
+      isComplete: json['isComplete'],
+      title: json['title'],
+      body: json['body'],
+      date: json['date'] != null
+          ? DateTime(
+              json['date'][0],
+              json['date'][1],
+              json['date'][2],
+              json['date'][3],
+            )
+          : null,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
-      'title': title,
-      'body': body,
-      'isComplete': isComplete,
-      'date': [
-        date.year,
-        date.month,
-        date.hour,
-        date.minute,
-        date.second,
-      ],
+      'title': this.title,
+      'body': this.body,
+      'isComplete': this.isComplete,
+      'date': this.date != null
+          ? [
+              this.date.year,
+              this.date.month,
+              this.date.hour,
+              this.date.minute,
+            ]
+          : null,
     };
   }
 }

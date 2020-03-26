@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,12 +10,25 @@ import 'package:todoapp/features/authetification/domain/usecases/sign_out.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_bloc.dart';
 import 'package:todoapp/features/introduction/presentation/bloc/bloc.dart';
 import 'package:todoapp/features/settings/data/datasource/settings_local_datasource.dart';
+import 'package:todoapp/features/settings/data/datasource/settings_remote_datasource.dart';
 import 'package:todoapp/features/settings/data/repositories/local_settings_repository_impl.dart';
-import 'package:todoapp/features/settings/domain/usecases/get_current_settings.dart';
-import 'package:todoapp/features/settings/domain/usecases/set_settings.dart';
+import 'package:todoapp/features/settings/domain/usecases/get_current_settings_local.dart';
+import 'package:todoapp/features/settings/domain/usecases/get_current_settings_remote.dart';
+import 'package:todoapp/features/settings/domain/usecases/set_settings_local.dart';
+import 'package:todoapp/features/settings/domain/usecases/set_settings_remote.dart';
 import 'package:todoapp/features/settings/presentation/bloc/bloc.dart';
+import 'package:todoapp/features/todo/data/datasource/todo_remote_datasource.dart';
+import 'package:todoapp/features/todo/data/repository/local_todo_repository_impl.dart';
+import 'package:todoapp/features/todo/data/repository/todo_remote_repository_impl.dart';
+import 'package:todoapp/features/todo/domain/usecases/get_local_todo.dart';
+import 'package:todoapp/features/todo/domain/usecases/get_remote_todo.dart';
+import 'package:todoapp/features/todo/domain/usecases/set_local_todo.dart';
+import 'package:todoapp/features/todo/domain/usecases/update_remote_todo.dart';
+import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
 
 import 'features/authetification/domain/usecases/sign_in.dart';
+import 'features/settings/data/repositories/remote_settings_repository_impl.dart';
+import 'features/todo/data/datasource/todo_local_datasource.dart';
 
 final sl = GetIt.instance;
 
@@ -22,21 +36,48 @@ Future<void> init() async {
   /// some help for app
   sl.registerSingleton(await SharedPreferences.getInstance());
   sl.registerSingleton(FirebaseAuth.instance);
+  sl.registerSingleton(Firestore.instance);
   // settings
   sl.registerSingleton(SettingsLocalDatasourceImpl(sl<SharedPreferences>()));
   sl.registerSingleton(
       LocalSettingsRepositoryImpl(sl<SettingsLocalDatasourceImpl>()));
-  sl.registerSingleton(GetCurrentSettings(sl<LocalSettingsRepositoryImpl>()));
-  sl.registerSingleton(SetSettings(sl<LocalSettingsRepositoryImpl>()));
+  sl.registerSingleton(
+      GetCurrentSettingsLocal(sl<LocalSettingsRepositoryImpl>()));
+  sl.registerSingleton(SetSettingsLocal(sl<LocalSettingsRepositoryImpl>()));
+  sl.registerSingleton(SettingsRemoteDatasourceImpl(sl<Firestore>()));
+  sl.registerSingleton(
+      RemoteSettingsRepositoryImpl(sl<SettingsRemoteDatasourceImpl>()));
+  sl.registerSingleton(
+      GetCurrentSettingsRemote(sl<RemoteSettingsRepositoryImpl>()));
+  sl.registerSingleton(SetSettingsRemote(sl<RemoteSettingsRepositoryImpl>()));
   sl.registerSingleton(
     SettingsBloc(
-      sl<GetCurrentSettings>(),
-      sl<SetSettings>(),
+      sl<GetCurrentSettingsLocal>(),
+      sl<SetSettingsLocal>(),
+      sl<GetCurrentSettingsRemote>(),
+      sl<SetSettingsRemote>(),
     ),
   );
   // introduction
   sl.registerSingleton(
     IntroductionBloc(),
+  );
+
+  // T0D0
+  sl.registerSingleton(TodoRemoteDatasourceImpl(sl<Firestore>()));
+  sl.registerSingleton(TODOLocalDatasourceImpl(sl<SharedPreferences>()));
+  sl.registerSingleton(
+      TodoRemoteRepositoryImpl(sl<TodoRemoteDatasourceImpl>()));
+  sl.registerSingleton(LocalTODORepositoryImpl(sl<TODOLocalDatasourceImpl>()));
+  sl.registerSingleton(GetRemoteTODO(sl<TodoRemoteRepositoryImpl>()));
+  sl.registerSingleton(UpdateRemoteTODO(sl<TodoRemoteRepositoryImpl>()));
+  sl.registerSingleton(GetLocalTodo(sl<LocalTODORepositoryImpl>()));
+  sl.registerSingleton(SetLocalTODO(sl<LocalTODORepositoryImpl>()));
+  sl.registerSingleton(
+    TodoBloc(
+      sl<GetLocalTodo>(),
+      sl<SetLocalTODO>(),
+    ),
   );
 
   /// auth
@@ -48,6 +89,10 @@ Future<void> init() async {
   sl.registerSingleton(SignIn(sl<FirebaseAuthRepositoryImpl>()));
   sl.registerSingleton(Register(sl<FirebaseAuthRepositoryImpl>()));
   sl.registerSingleton(SignInAuto(sl<FirebaseAuthRepositoryImpl>()));
-  sl.registerSingleton(
-      AuthBloc(sl<SignOut>(), sl<SignIn>(), sl<Register>(), sl<SignInAuto>()));
+  sl.registerSingleton(AuthBloc(
+    sl<SignOut>(),
+    sl<SignIn>(),
+    sl<Register>(),
+    sl<SignInAuto>(),
+  ));
 }

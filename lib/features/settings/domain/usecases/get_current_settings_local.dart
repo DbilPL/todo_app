@@ -5,10 +5,10 @@ import 'package:todoapp/core/usecases/usecase.dart';
 import 'package:todoapp/features/settings/data/models/settings_model.dart';
 import 'package:todoapp/features/settings/domain/repositories/local_settings_repository.dart';
 
-class GetCurrentSettings extends UseCase<SettingsModel, NoParams> {
+class GetCurrentSettingsLocal extends UseCase<SettingsModel, NoParams> {
   final LocalSettingsRepository localSettingsRepository;
 
-  GetCurrentSettings(this.localSettingsRepository);
+  GetCurrentSettingsLocal(this.localSettingsRepository);
 
   @override
   Future<Either<Failure, SettingsModel>> call(NoParams params) async =>
