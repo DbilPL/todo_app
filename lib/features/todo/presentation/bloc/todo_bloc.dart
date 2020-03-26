@@ -232,6 +232,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
               break;
             }
           }
+          break;
         }
       }
 
@@ -252,8 +253,10 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
           for (int j = 0; j < event.list[i].todoList.length; j++) {
             if (event.list[i].todoList[j].title == event.todoTitle) {
               list[i].todoList.removeAt(j);
+              break;
             }
           }
+          break;
         }
       }
 
