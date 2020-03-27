@@ -53,9 +53,9 @@ class _TodoModalBottomSheetState extends State<TodoModalBottomSheet> {
                         BlocProvider.of<TodoBloc>(context).add(
                             AddTodoGroupLocal(
                                 _controller.text, todoState.list));
-                    }
-                    BlocProvider.of<TodoBloc>(context).add(
-                        TodoFailure('Not valid group name.', todoState.list));
+                    } else
+                      BlocProvider.of<TodoBloc>(context).add(
+                          TodoFailure('Not valid group name.', todoState.list));
 
                     Navigator.of(context).pop();
                   },

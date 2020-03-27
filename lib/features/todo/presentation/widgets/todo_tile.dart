@@ -89,7 +89,7 @@ class _TodoTileState extends State<TodoTile> {
                       ? Icon(
                           Icons.check,
                           color: Colors.green,
-                          size: 20,
+                          size: 24,
                         )
                       : Text(''),
                 ],
