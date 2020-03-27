@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todoapp/features/authetification/data/datasource/firebase_auth_datasource.dart';
@@ -9,6 +10,10 @@ import 'package:todoapp/features/authetification/domain/usecases/sign_in_auto.da
 import 'package:todoapp/features/authetification/domain/usecases/sign_out.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_bloc.dart';
 import 'package:todoapp/features/introduction/presentation/bloc/bloc.dart';
+import 'package:todoapp/features/notifications/data/datasource/local_notifications_datasource.dart';
+import 'package:todoapp/features/notifications/data/repositories/local_notifications_repository_impl.dart';
+import 'package:todoapp/features/notifications/domain/usecases/cancel_notification_local.dart';
+import 'package:todoapp/features/notifications/domain/usecases/set_notification_local.dart';
 import 'package:todoapp/features/settings/data/datasource/settings_local_datasource.dart';
 import 'package:todoapp/features/settings/data/datasource/settings_remote_datasource.dart';
 import 'package:todoapp/features/settings/data/repositories/local_settings_repository_impl.dart';
@@ -27,6 +32,7 @@ import 'package:todoapp/features/todo/domain/usecases/update_remote_todo.dart';
 import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
 
 import 'features/authetification/domain/usecases/sign_in.dart';
+import 'features/notifications/domain/usecases/cancel_all_notifications_local.dart';
 import 'features/settings/data/repositories/remote_settings_repository_impl.dart';
 import 'features/todo/data/datasource/todo_local_datasource.dart';
 
@@ -37,6 +43,7 @@ Future<void> init() async {
   sl.registerSingleton(await SharedPreferences.getInstance());
   sl.registerSingleton(FirebaseAuth.instance);
   sl.registerSingleton(Firestore.instance);
+  sl.registerSingleton(FlutterLocalNotificationsPlugin());
   // settings
   sl.registerSingleton(SettingsLocalDatasourceImpl(sl<SharedPreferences>()));
   sl.registerSingleton(
@@ -58,6 +65,20 @@ Future<void> init() async {
       sl<SetSettingsRemote>(),
     ),
   );
+
+  /// notifications
+
+  sl.registerSingleton(
+      LocalNotificationsDatasourceImpl(sl<FlutterLocalNotificationsPlugin>()));
+  sl.registerSingleton(
+      LocalNotificationsRepositoryImpl(sl<LocalNotificationsDatasourceImpl>()));
+  sl.registerSingleton(
+      CancelNotificationLocal(sl<LocalNotificationsRepositoryImpl>()));
+  sl.registerSingleton(
+      SetNotificationLocal(sl<LocalNotificationsRepositoryImpl>()));
+  sl.registerSingleton(
+      CancelAllNotificationsLocal(sl<LocalNotificationsRepositoryImpl>()));
+
   // introduction
   sl.registerSingleton(
     IntroductionBloc(),
@@ -75,9 +96,11 @@ Future<void> init() async {
   sl.registerSingleton(SetLocalTODO(sl<LocalTODORepositoryImpl>()));
   sl.registerSingleton(
     TodoBloc(
-      sl<GetLocalTodo>(),
-      sl<SetLocalTODO>(),
-    ),
+        sl<GetLocalTodo>(),
+        sl<SetLocalTODO>(),
+        sl<CancelNotificationLocal>(),
+        sl<SetNotificationLocal>(),
+        sl<CancelAllNotificationsLocal>()),
   );
 
   /// auth

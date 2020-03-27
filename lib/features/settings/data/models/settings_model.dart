@@ -25,27 +25,31 @@ class SettingsModel extends Settings {
       [backgroundColor, primaryColor, fontColor, fontFamily];
 
   Map<String, dynamic> toJSON() {
+    print('to json');
+
     return {
-      "fontFamily": fontFamily,
+      "fontFamily": this.fontFamily,
       "backgroundColor": [
-        backgroundColor.red,
-        backgroundColor.green,
-        backgroundColor.blue,
+        this.backgroundColor.red,
+        this.backgroundColor.green,
+        this.backgroundColor.blue,
       ],
       "primaryColor": [
-        primaryColor.red,
-        primaryColor.green,
-        primaryColor.blue,
+        this.primaryColor.red,
+        this.primaryColor.green,
+        this.primaryColor.blue,
       ],
       "fontColor": [
-        fontColor.red,
-        fontColor.green,
-        fontColor.blue,
+        this.fontColor.red,
+        this.fontColor.green,
+        this.fontColor.blue,
       ],
     };
   }
 
   static SettingsModel toSettings(Map<String, dynamic> json) {
+    print(json);
+
     return SettingsModel(
       fontFamily: json['fontFamily'],
       backgroundColor: Color.fromRGBO(

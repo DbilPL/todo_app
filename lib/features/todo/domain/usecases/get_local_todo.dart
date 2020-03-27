@@ -12,6 +12,6 @@ class GetLocalTodo extends UseCase<List<TODOGroupModel>, NoParams> {
 
   @override
   Future<Either<Failure, List<TODOGroupModel>>> call(NoParams params) async {
-    return await repositoryImpl.getTODO();
+    return repositoryImpl.getTODO();
   }
 }

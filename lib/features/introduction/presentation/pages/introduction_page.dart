@@ -10,7 +10,7 @@ class _IntroducitonPageState extends State<IntroducitonPage> {
   static const flareFilesData = [
     {'name': 'Intro1', 'text': 'Simple to use.'},
     {'name': 'Intro2', 'text': 'Cloud saving'},
-    {'name': 'Intro3', 'text': 'Your data is save'},
+    {'name': 'Intro3', 'text': 'Your data is safe'},
   ];
 
   @override

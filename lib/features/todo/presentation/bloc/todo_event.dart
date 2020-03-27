@@ -22,7 +22,8 @@ class TodoFailure extends TodoEvent {
 class DeleteTodoGroupLocal extends TodoEvent {
   final String groupName;
   final List<TODOGroupModel> list;
-  DeleteTodoGroupLocal(this.groupName, this.list) : super(list);
+  final List<int> ids;
+  DeleteTodoGroupLocal(this.groupName, this.list, this.ids) : super(list);
 
   @override
   List<Object> get props => [groupName, list];
@@ -30,12 +31,18 @@ class DeleteTodoGroupLocal extends TodoEvent {
 
 class AddTodoToGroupLocal extends TodoEvent {
   final String groupName, title, body, date;
+  final int id;
 
   final List<TODOGroupModel> list;
 
   AddTodoToGroupLocal(
-      this.groupName, this.title, this.body, this.date, this.list)
-      : super(list);
+    this.groupName,
+    this.title,
+    this.body,
+    this.date,
+    this.list,
+    this.id,
+  ) : super(list);
 
   @override
   List<Object> get props => [title, body, date, list];
@@ -45,8 +52,10 @@ class TodoChangeStatusLocal extends TodoEvent {
   final List<TODOGroupModel> list;
   final String groupTitle;
   final TODOModel todo;
+  final int id;
 
-  TodoChangeStatusLocal(this.list, this.groupTitle, this.todo) : super(list);
+  TodoChangeStatusLocal(this.list, this.groupTitle, this.todo, this.id)
+      : super(list);
 
   @override
   List<Object> get props => [list, groupTitle, todo];
@@ -56,7 +65,9 @@ class DeleteTodoLocal extends TodoEvent {
   final String groupTitle;
   final String todoTitle;
   final List<TODOGroupModel> list;
-  DeleteTodoLocal(this.todoTitle, this.groupTitle, this.list) : super(list);
+  final int id;
+  DeleteTodoLocal(this.todoTitle, this.groupTitle, this.list, this.id)
+      : super(list);
 
   @override
   List<Object> get props => [this.groupTitle, this.todoTitle, this.list];
@@ -90,8 +101,9 @@ class ReorderListLocal extends TodoEvent {
 class AddTodoGroupLocal extends TodoEvent {
   final String title;
   final List<TODOGroupModel> prevList;
+  final int uniqueID;
 
-  AddTodoGroupLocal(this.title, this.prevList) : super(prevList);
+  AddTodoGroupLocal(this.title, this.prevList, this.uniqueID) : super(prevList);
 
   @override
   List<Object> get props => [title];

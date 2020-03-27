@@ -17,6 +17,18 @@ class TodoGroupView extends StatefulWidget {
 }
 
 class _TodoGroupViewState extends State<TodoGroupView> {
+  List<int> ids;
+
+  @override
+  void initState() {
+    ids = List(widget.todos.todoList.length);
+
+    for (int i = 0; i < widget.todos.todoList.length; i++) {
+      ids[i] = widget.todos.uniqueID + i;
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -45,7 +57,9 @@ class _TodoGroupViewState extends State<TodoGroupView> {
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 Text(
-                  widget.todos.groupName,
+                  widget.todos.groupName.length > 15
+                      ? widget.todos.groupName.substring(0, 13) + '...'
+                      : widget.todos.groupName,
                   style: TextStyle(
                     color: Theme.of(context).backgroundColor,
                     fontSize: 20,
@@ -63,6 +77,7 @@ class _TodoGroupViewState extends State<TodoGroupView> {
                             DeleteTodoGroupLocal(
                               widget.todos.groupName,
                               BlocProvider.of<TodoBloc>(context).state.list,
+                              ids,
                             ),
                           );
                       },
@@ -82,6 +97,8 @@ class _TodoGroupViewState extends State<TodoGroupView> {
                           builder: (context) {
                             return TodoModalBottomSheetTodo(
                               widget.todos.groupName,
+                              widget.todos.todoList.length +
+                                  widget.todos.uniqueID,
                             );
                           },
                         );
@@ -98,18 +115,19 @@ class _TodoGroupViewState extends State<TodoGroupView> {
             ),
           ]..addAll(
               widget.todos.todoList.length != 0
-                  ? widget.todos.todoList.map(
-                      (val) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 4.0, top: 4.0),
-                          child: TodoTile(
-                            title: widget.todos.groupName,
-                            todo: val,
-                            key: Key(val.title),
+                  ? Iterable.generate(widget.todos.todoList.length, (index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 4.0, top: 4.0),
+                        child: TodoTile(
+                          title: widget.todos.groupName,
+                          todo: widget.todos.todoList[index],
+                          id: ids[index],
+                          key: Key(
+                            widget.todos.todoList[index].title,
                           ),
-                        );
-                      },
-                    )
+                        ),
+                      );
+                    })
                   : Iterable.generate(
                       1,
                       (v) => Text(

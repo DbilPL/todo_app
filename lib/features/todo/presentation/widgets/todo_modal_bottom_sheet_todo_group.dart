@@ -4,6 +4,10 @@ import 'package:todoapp/core/methods.dart';
 import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
 
 class TodoModalBottomSheet extends StatefulWidget {
+  final int uniqueID;
+
+  const TodoModalBottomSheet({Key key, this.uniqueID}) : super(key: key);
+
   @override
   _TodoModalBottomSheetState createState() => _TodoModalBottomSheetState();
 }
@@ -31,13 +35,15 @@ class _TodoModalBottomSheetState extends State<TodoModalBottomSheet> {
                   ),
                 ),
                 TextFormField(
-                  maxLength: 15,
                   autofocus: true,
                   style: TextStyle(
                     color: Theme.of(context).textTheme.caption.color,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Title',
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 1),
+                    ),
                   ),
                   controller: _controller,
                 ),
@@ -51,8 +57,12 @@ class _TodoModalBottomSheetState extends State<TodoModalBottomSheet> {
                       if (isUserRegistered) {
                       } else
                         BlocProvider.of<TodoBloc>(context).add(
-                            AddTodoGroupLocal(
-                                _controller.text, todoState.list));
+                          AddTodoGroupLocal(
+                            _controller.text,
+                            todoState.list,
+                            widget.uniqueID,
+                          ),
+                        );
                     } else
                       BlocProvider.of<TodoBloc>(context).add(
                           TodoFailure('Not valid group name.', todoState.list));

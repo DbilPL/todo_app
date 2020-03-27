@@ -37,8 +37,14 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     if (event is LoadSettingsLocalInitial) {
       try {
         final settings = await _getCurrentSettingsLocal(NoParams());
-        yield settings.fold((failure) {
-          return CacheFailureState(settingsModelInitial);
+        yield await settings.fold((failure) async {
+          final local = await _setSettingsLocal(settingsModelInitial);
+
+          return local.fold((failure) {
+            return CacheFailureState(settingsModelInitial);
+          }, (success) {
+            return FirstRunState(settingsModelInitial);
+          });
         }, (settings) {
           return AlreadyRunned(settings);
         });

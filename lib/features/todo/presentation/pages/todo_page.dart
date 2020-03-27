@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/core/methods.dart';
@@ -167,11 +169,13 @@ class _TodoPageState extends State<TodoPage> {
                                   if (isUserRegistered) {
                                   } else
                                     BlocProvider.of<TodoBloc>(context).add(
-                                        DeleteAllTodoLocal(
-                                            BlocProvider.of<TodoBloc>(context)
-                                                .state
-                                                .list,
-                                            true));
+                                      DeleteAllTodoLocal(
+                                        BlocProvider.of<TodoBloc>(context)
+                                            .state
+                                            .list,
+                                        true,
+                                      ),
+                                    );
                                   Navigator.pop(context);
                                 },
                               ),
@@ -203,7 +207,9 @@ class _TodoPageState extends State<TodoPage> {
                     await showModalBottomSheet(
                       context: context,
                       builder: (context) {
-                        return TodoModalBottomSheet();
+                        return TodoModalBottomSheet(
+                          uniqueID: Random().nextInt(10000),
+                        );
                       },
                     );
                   },

@@ -2,7 +2,9 @@ import 'package:todoapp/features/todo/data/model/todo_model.dart';
 import 'package:todoapp/features/todo/domain/entities/todo_list.dart';
 
 class TODOGroupModel extends TODOList {
-  TODOGroupModel(String groupName, List<TODOModel> todoList)
+  final int uniqueID;
+
+  TODOGroupModel(String groupName, List<TODOModel> todoList, this.uniqueID)
       : super(groupName, todoList);
 
   static TODOGroupModel fromJson(Map<String, dynamic> json) {
@@ -16,6 +18,7 @@ class TODOGroupModel extends TODOList {
               },
             )
           : [],
+      json['uniqueID'] as int,
     );
   }
 
@@ -23,6 +26,8 @@ class TODOGroupModel extends TODOList {
     Map<String, dynamic> json = {};
 
     json['title'] = this.groupName;
+
+    json['uniqueID'] = this.uniqueID;
 
     json['list'] = [];
 

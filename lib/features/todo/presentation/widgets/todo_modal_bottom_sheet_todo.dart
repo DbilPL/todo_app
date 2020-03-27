@@ -7,8 +7,9 @@ import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
 
 class TodoModalBottomSheetTodo extends StatefulWidget {
   final String groupName;
+  final int id;
 
-  TodoModalBottomSheetTodo(this.groupName);
+  TodoModalBottomSheetTodo(this.groupName, this.id);
 
   @override
   _TodoModalBottomSheetTodoState createState() =>
@@ -37,11 +38,15 @@ class _TodoModalBottomSheetTodoState extends State<TodoModalBottomSheetTodo> {
                   ),
                 ),
                 TextFormField(
-                  maxLength: 15,
                   style: TextStyle(
                     color: Theme.of(context).textTheme.caption.color,
                   ),
-                  decoration: InputDecoration(hintText: 'Title'),
+                  decoration: InputDecoration(
+                    hintText: 'Title',
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 1),
+                    ),
+                  ),
                   controller: _titleController,
                 ),
                 Text(
@@ -55,7 +60,12 @@ class _TodoModalBottomSheetTodoState extends State<TodoModalBottomSheetTodo> {
                     color: Theme.of(context).textTheme.caption.color,
                   ),
                   maxLength: null,
-                  decoration: InputDecoration(hintText: 'Body'),
+                  decoration: InputDecoration(
+                    hintText: 'Body',
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 1),
+                    ),
+                  ),
                   controller: _bodyController,
                   keyboardType: TextInputType.multiline,
                 ),
@@ -81,10 +91,10 @@ class _TodoModalBottomSheetTodoState extends State<TodoModalBottomSheetTodo> {
                           theme: DatePickerTheme(
                             backgroundColor: Theme.of(context).backgroundColor,
                             doneStyle: TextStyle(
-                              color: Theme.of(context).textTheme.caption.color,
+                              color: Theme.of(context).backgroundColor,
                             ),
                             cancelStyle: TextStyle(
-                              color: Theme.of(context).textTheme.caption.color,
+                              color: Theme.of(context).backgroundColor,
                             ),
                             itemStyle: TextStyle(
                               color: Theme.of(context).primaryColor,
@@ -109,7 +119,7 @@ class _TodoModalBottomSheetTodoState extends State<TodoModalBottomSheetTodo> {
                       color: Theme.of(context).primaryColor,
                     ),
                     RaisedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         final todoState =
                             BlocProvider.of<TodoBloc>(context).state;
 
@@ -119,11 +129,13 @@ class _TodoModalBottomSheetTodoState extends State<TodoModalBottomSheetTodo> {
                         } else {
                           BlocProvider.of<TodoBloc>(context).add(
                             AddTodoToGroupLocal(
-                                widget.groupName,
-                                _titleController.text,
-                                _bodyController.text,
-                                _dateController.text,
-                                todoState.list),
+                              widget.groupName,
+                              _titleController.text,
+                              _bodyController.text,
+                              _dateController.text,
+                              todoState.list,
+                              widget.id,
+                            ),
                           );
                         }
                         else

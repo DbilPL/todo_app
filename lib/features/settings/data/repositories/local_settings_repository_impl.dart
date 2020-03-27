@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:todoapp/core/errors/exceptions.dart';
 import 'package:todoapp/core/errors/failure.dart';
 import 'package:todoapp/features/settings/data/datasource/settings_local_datasource.dart';
 import 'package:todoapp/features/settings/data/models/settings_model.dart';
@@ -13,10 +12,9 @@ class LocalSettingsRepositoryImpl extends LocalSettingsRepository {
   @override
   Future<Either<Failure, SettingsModel>> getCurrentLocalSavedSettings() async {
     try {
-      final settings =
-          await localDatasourceImpl.getCurrentLocallySavedSettings();
+      final settings = localDatasourceImpl.getCurrentLocallySavedSettings();
       return Right(settings);
-    } on CacheException {
+    } catch (e) {
       return Left(CacheFailure('Something went wrong'));
     }
   }
@@ -26,7 +24,7 @@ class LocalSettingsRepositoryImpl extends LocalSettingsRepository {
     try {
       final set = await localDatasourceImpl.setSettingsLocally(params);
       return Right(set);
-    } on CacheException {
+    } catch (e) {
       return Left(CacheFailure('Something went wrong'));
     }
   }
