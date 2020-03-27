@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:todoapp/features/todo/data/model/todo_model.dart';
 import 'package:todoapp/features/todo/domain/entities/todo_list.dart';
 
@@ -7,14 +6,12 @@ class TODOGroupModel extends TODOList {
       : super(groupName, todoList);
 
   static TODOGroupModel fromJson(Map<String, dynamic> json) {
-    debugPrint('from json');
     return TODOGroupModel(
       json['title'],
       json['list'] != []
           ? List.generate(
               json['list'].length,
               (index) {
-                print(index);
                 return TODOModel.fromJson(json['list'][index]);
               },
             )
@@ -23,8 +20,6 @@ class TODOGroupModel extends TODOList {
   }
 
   Map<String, dynamic> toJson() {
-    debugPrint('to json');
-
     Map<String, dynamic> json = {};
 
     json['title'] = this.groupName;
@@ -39,8 +34,6 @@ class TODOGroupModel extends TODOList {
       }
     else
       json['list'] = [];
-
-    print('json: $json');
 
     return json;
   }

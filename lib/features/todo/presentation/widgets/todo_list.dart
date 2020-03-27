@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todoapp/core/methods.dart';
 import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
 import 'package:todoapp/features/todo/presentation/widgets/todo_group_view.dart';
 
-class AnonymousTodoList extends StatefulWidget {
+class TodoList extends StatefulWidget {
   @override
-  _AnonymousTodoListState createState() => _AnonymousTodoListState();
+  _TodoListState createState() => _TodoListState();
 }
 
-class _AnonymousTodoListState extends State<AnonymousTodoList> {
+class _TodoListState extends State<TodoList> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
@@ -22,8 +23,12 @@ class _AnonymousTodoListState extends State<AnonymousTodoList> {
                     ))
                 .toList(),
             onReorder: (int oldIndex, int newIndex) {
-              BlocProvider.of<TodoBloc>(context)
-                  .add(ReorderListLocal(state.list, oldIndex, newIndex));
+              final isUserRegistered = isRegistered(context);
+
+              if (isUserRegistered) {
+              } else
+                BlocProvider.of<TodoBloc>(context)
+                    .add(ReorderListLocal(state.list, oldIndex, newIndex));
             },
           );
         else

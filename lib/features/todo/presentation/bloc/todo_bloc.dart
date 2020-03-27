@@ -29,8 +29,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         final todoOrFailure = await _getLocalTodo(NoParams());
 
         yield await todoOrFailure.fold((failure) async {
-          print('something went wrong!');
-          print(failure.error);
           final setTodoOrFailure = await _setLocalTODO([]);
 
           return setTodoOrFailure.fold((failure) {
@@ -39,7 +37,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
             return TodoUpdated([]);
           });
         }, (todos) {
-          print(todos);
           print('success');
           return TodoUpdated(todos);
         });
@@ -63,9 +60,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
         final newIndex =
             event.newIndex > 1 ? event.newIndex - 1 : event.newIndex;
-
-        print(event.oldIndex);
-        print(event.newIndex);
 
         final oldItem = newList[event.oldIndex];
 
@@ -111,7 +105,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
           },
           (success) {
             print('success');
-            print(newList);
             return TodoUpdated(newList);
           },
         );
@@ -131,7 +124,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
           list = event.list..removeAt(i);
         }
       }
-      print(list.toString());
 
       final setOrSuccess = await _setLocalTODO(list);
 

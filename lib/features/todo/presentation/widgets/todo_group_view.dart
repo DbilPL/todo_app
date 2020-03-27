@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todoapp/core/methods.dart';
 import 'package:todoapp/features/todo/data/model/todo_list_model.dart';
 import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
-import 'package:todoapp/features/todo/presentation/widgets/todo_modal_bottom_sheet_anonym_todo.dart';
-import 'package:todoapp/features/todo/presentation/widgets/todo_tile_anonym.dart';
+import 'package:todoapp/features/todo/presentation/widgets/todo_modal_bottom_sheet_todo.dart';
+import 'package:todoapp/features/todo/presentation/widgets/todo_tile.dart';
 
 class TodoGroupView extends StatefulWidget {
   final TODOGroupModel todos;
@@ -54,12 +55,16 @@ class _TodoGroupViewState extends State<TodoGroupView> {
                   children: <Widget>[
                     GestureDetector(
                       onTap: () {
-                        BlocProvider.of<TodoBloc>(context).add(
-                          DeleteTodoGroupLocal(
-                            widget.todos.groupName,
-                            BlocProvider.of<TodoBloc>(context).state.list,
-                          ),
-                        );
+                        final isUserRegistered = isRegistered(context);
+
+                        if (isUserRegistered) {
+                        } else
+                          BlocProvider.of<TodoBloc>(context).add(
+                            DeleteTodoGroupLocal(
+                              widget.todos.groupName,
+                              BlocProvider.of<TodoBloc>(context).state.list,
+                            ),
+                          );
                       },
                       child: Icon(
                         Icons.cancel,
@@ -73,10 +78,13 @@ class _TodoGroupViewState extends State<TodoGroupView> {
                     GestureDetector(
                       onTap: () {
                         showModalBottomSheet(
-                            context: context,
-                            builder: (context) =>
-                                TodoModalBottomSheetAnonymTodo(
-                                    widget.todos.groupName));
+                          context: context,
+                          builder: (context) {
+                            return TodoModalBottomSheetTodo(
+                              widget.todos.groupName,
+                            );
+                          },
+                        );
                       },
                       child: Icon(
                         Icons.border_color,

@@ -41,12 +41,9 @@ class TODOLocalDatasourceImpl implements TODOLocalDatasource {
 
   @override
   Future<void> setCurrentTODO(List<TODOGroupModel> todogModel) async {
-    print(todogModel.length);
-
     List<String> todo = List.generate(
       todogModel.length,
       (index) {
-        print(index);
         return json.encode(
           todogModel[index].toJson(),
         );
@@ -54,8 +51,6 @@ class TODOLocalDatasourceImpl implements TODOLocalDatasource {
     );
 
     print('set');
-
-    print(todo);
 
     await storage.setStringList(TODO_KEY, todo);
   }

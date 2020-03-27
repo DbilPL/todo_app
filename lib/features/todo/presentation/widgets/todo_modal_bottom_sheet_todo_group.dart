@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todoapp/core/methods.dart';
 import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
 
-class TodoModalBottomSheetAnonym extends StatefulWidget {
+class TodoModalBottomSheet extends StatefulWidget {
   @override
-  _TodoModalBottomSheetAnonymState createState() =>
-      _TodoModalBottomSheetAnonymState();
+  _TodoModalBottomSheetState createState() => _TodoModalBottomSheetState();
 }
 
-class _TodoModalBottomSheetAnonymState
-    extends State<TodoModalBottomSheetAnonym> {
+class _TodoModalBottomSheetState extends State<TodoModalBottomSheet> {
   TextEditingController _controller = TextEditingController();
 
   @override
@@ -39,7 +38,6 @@ class _TodoModalBottomSheetAnonymState
                   ),
                   decoration: InputDecoration(
                     hintText: 'Title',
-                    hintStyle: TextStyle(),
                   ),
                   controller: _controller,
                 ),
@@ -47,12 +45,17 @@ class _TodoModalBottomSheetAnonymState
                   onPressed: () {
                     final todoState = BlocProvider.of<TodoBloc>(context).state;
 
-                    if (_controller.text != '')
-                      BlocProvider.of<TodoBloc>(context).add(
-                          AddTodoGroupLocal(_controller.text, todoState.list));
-                    else
-                      BlocProvider.of<TodoBloc>(context).add(
-                          TodoFailure('Not valid group name.', todoState.list));
+                    if (_controller.text != '') {
+                      final isUserRegistered = isRegistered(context);
+
+                      if (isUserRegistered) {
+                      } else
+                        BlocProvider.of<TodoBloc>(context).add(
+                            AddTodoGroupLocal(
+                                _controller.text, todoState.list));
+                    }
+                    BlocProvider.of<TodoBloc>(context).add(
+                        TodoFailure('Not valid group name.', todoState.list));
 
                     Navigator.of(context).pop();
                   },

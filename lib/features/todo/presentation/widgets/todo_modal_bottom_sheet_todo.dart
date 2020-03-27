@@ -2,20 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:todoapp/core/methods.dart';
 import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
 
-class TodoModalBottomSheetAnonymTodo extends StatefulWidget {
+class TodoModalBottomSheetTodo extends StatefulWidget {
   final String groupName;
 
-  TodoModalBottomSheetAnonymTodo(this.groupName);
+  TodoModalBottomSheetTodo(this.groupName);
 
   @override
-  _TodoModalBottomSheetAnonymTodoState createState() =>
-      _TodoModalBottomSheetAnonymTodoState();
+  _TodoModalBottomSheetTodoState createState() =>
+      _TodoModalBottomSheetTodoState();
 }
 
-class _TodoModalBottomSheetAnonymTodoState
-    extends State<TodoModalBottomSheetAnonymTodo> {
+class _TodoModalBottomSheetTodoState extends State<TodoModalBottomSheetTodo> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _bodyController = TextEditingController();
   TextEditingController _dateController = TextEditingController(text: '');
@@ -74,30 +74,31 @@ class _TodoModalBottomSheetAnonymTodoState
                   children: <Widget>[
                     RaisedButton(
                       onPressed: () async {
-                        DatePicker.showDateTimePicker(context,
-                            minTime: DateTime.now(),
-                            currentTime: DateTime.now(),
-                            theme: DatePickerTheme(
-                              backgroundColor:
-                                  Theme.of(context).backgroundColor,
-                              doneStyle: TextStyle(
-                                color:
-                                    Theme.of(context).textTheme.caption.color,
-                              ),
-                              cancelStyle: TextStyle(
-                                color:
-                                    Theme.of(context).textTheme.caption.color,
-                              ),
-                              itemStyle: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                              ),
-                              headerColor: Theme.of(context).primaryColor,
-                            ), onConfirm: (date) {
-                          _dateController.value = TextEditingValue(
+                        DatePicker.showDateTimePicker(
+                          context,
+                          minTime: DateTime.now(),
+                          currentTime: DateTime.now(),
+                          theme: DatePickerTheme(
+                            backgroundColor: Theme.of(context).backgroundColor,
+                            doneStyle: TextStyle(
+                              color: Theme.of(context).textTheme.caption.color,
+                            ),
+                            cancelStyle: TextStyle(
+                              color: Theme.of(context).textTheme.caption.color,
+                            ),
+                            itemStyle: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            headerColor: Theme.of(context).primaryColor,
+                          ),
+                          onConfirm: (date) {
+                            _dateController.value = TextEditingValue(
                               text: date != null
                                   ? '${date.year}/${date.month}/${date.day}/${date.hour}/${date.minute}'
-                                  : '');
-                        });
+                                  : '',
+                            );
+                          },
+                        );
                       },
                       child: Text(
                         'Pick date',
@@ -112,8 +113,10 @@ class _TodoModalBottomSheetAnonymTodoState
                         final todoState =
                             BlocProvider.of<TodoBloc>(context).state;
 
+                        final isUserRegistered = isRegistered(context);
                         if (_titleController.text != '' &&
-                            _bodyController.text != '')
+                            _bodyController.text != '') if (isUserRegistered) {
+                        } else {
                           BlocProvider.of<TodoBloc>(context).add(
                             AddTodoToGroupLocal(
                                 widget.groupName,
@@ -122,6 +125,7 @@ class _TodoModalBottomSheetAnonymTodoState
                                 _dateController.text,
                                 todoState.list),
                           );
+                        }
                         else
                           BlocProvider.of<TodoBloc>(context).add(
                               TodoFailure('Not valid texts.', todoState.list));
