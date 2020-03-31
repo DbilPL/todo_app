@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/core/methods.dart';
+import 'package:todoapp/features/authetification/presenation/bloc/auth_bloc.dart';
+import 'package:todoapp/features/authetification/presenation/bloc/bloc.dart';
 import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
 import 'package:todoapp/features/todo/presentation/widgets/todo_group_view.dart';
 
@@ -31,7 +34,46 @@ class _TodoListState extends State<TodoList> {
                     .add(ReorderListLocal(state.list, oldIndex, newIndex));
             },
           );
-        else if (state is LoadingTodoState) {
+        else if (state is FailureTodoState) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                RaisedButton(
+                  onPressed: () {
+                    final authState = BlocProvider.of<AuthBloc>(context).state;
+
+                    if (authState is Entered) {
+                      if (isRegistered(context)) {
+                        BlocProvider.of<TodoBloc>(context).add(
+                          LoadRemoteTodoInitial(
+                            [],
+                            authState.user.props[0],
+                          ),
+                        );
+                      } else {
+                        BlocProvider.of<TodoBloc>(context).add(
+                          LoadLocalTodoInitial(
+                            [],
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  child: Text(
+                    'Reload',
+                    style: TextStyle(
+                      color: Theme.of(context).backgroundColor,
+                    ),
+                  ),
+                  color: Theme.of(context).primaryColor,
+                ),
+              ],
+            ),
+          );
+        } else if (state is LoadingTodoState) {
           return Center(
             child: CircularProgressIndicator(
               valueColor:
