@@ -25,7 +25,7 @@ void main() {
       ),
     );
 
-    final result = await mockNotificationsRepository.cancelNotification(tId);
+    final result = await usecase(tId);
 
     expect(result, Right(doSomething()));
 

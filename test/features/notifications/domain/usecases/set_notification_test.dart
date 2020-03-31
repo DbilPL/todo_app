@@ -36,8 +36,7 @@ void main() {
       ),
     );
 
-    final result =
-        await mockNotificationsRepository.setNotification(tNotification);
+    final result = await usecase(tNotification);
 
     expect(result, Right(doSomething()));
 

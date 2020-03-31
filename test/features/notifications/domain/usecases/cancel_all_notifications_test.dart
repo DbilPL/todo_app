@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:todoapp/features/notifications/domain/repositories/notifications_repository.dart';
 import 'package:todoapp/features/notifications/domain/usecases/cancel_all_notifications.dart';
+import 'package:todoapp/features/settings/domain/usecases/get_current_settings_local.dart';
 
 import '../../../settings/domain/usecases/set_settings_local_test.dart';
 
@@ -26,7 +27,7 @@ void main() {
       ),
     );
 
-    final result = await mockNotificationsRepository.cancelAllNotifications();
+    final result = usecase(NoParams());
 
     expect(result, Right(doSomething()));
 
