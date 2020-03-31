@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/core/methods.dart';
+import 'package:todoapp/features/authetification/presenation/bloc/auth_bloc.dart';
+import 'package:todoapp/features/authetification/presenation/bloc/bloc.dart';
 import 'package:todoapp/features/todo/domain/entities/todo.dart';
 import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
 import 'package:todoapp/features/todo/presentation/pages/todo_tile_view_page.dart';
@@ -38,28 +40,52 @@ class _TodoTileState extends State<TodoTile> {
       child: Dismissible(
         onDismissed: (dismiss) {
           if (dismiss == DismissDirection.startToEnd) {
-            if (isUserRegistered) {
-            } else
-              BlocProvider.of<TodoBloc>(context).add(
-                TodoChangeStatusLocal(
-                  BlocProvider.of<TodoBloc>(context).state.list,
-                  widget.title,
-                  todo,
-                  widget.id,
-                ),
-              );
+            final authState = BlocProvider.of<AuthBloc>(context).state;
+            if (authState is Entered) {
+              if (isUserRegistered) {
+                BlocProvider.of<TodoBloc>(context).add(
+                  TodoChangeStatusRemote(
+                    BlocProvider.of<TodoBloc>(context).state.list,
+                    widget.title,
+                    todo,
+                    widget.id,
+                    authState.user.props[0],
+                  ),
+                );
+              } else
+                BlocProvider.of<TodoBloc>(context).add(
+                  TodoChangeStatusLocal(
+                    BlocProvider.of<TodoBloc>(context).state.list,
+                    widget.title,
+                    todo,
+                    widget.id,
+                  ),
+                );
+            }
           }
           if (dismiss == DismissDirection.endToStart) {
-            if (isUserRegistered) {
-            } else
-              BlocProvider.of<TodoBloc>(context).add(
-                DeleteTodoLocal(
-                  todo.title,
-                  widget.title,
-                  BlocProvider.of<TodoBloc>(context).state.list,
-                  widget.id,
-                ),
-              );
+            final authState = BlocProvider.of<AuthBloc>(context).state;
+            if (authState is Entered) {
+              if (isUserRegistered) {
+                BlocProvider.of<TodoBloc>(context).add(
+                  DeleteTodoRemote(
+                    todo.title,
+                    widget.title,
+                    BlocProvider.of<TodoBloc>(context).state.list,
+                    widget.id,
+                    authState.user.props[0],
+                  ),
+                );
+              } else
+                BlocProvider.of<TodoBloc>(context).add(
+                  DeleteTodoLocal(
+                    todo.title,
+                    widget.title,
+                    BlocProvider.of<TodoBloc>(context).state.list,
+                    widget.id,
+                  ),
+                );
+            }
           }
         },
         child: Container(

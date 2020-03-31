@@ -47,10 +47,12 @@ class Entered extends AuthState {
 
   final String error;
 
-  Entered(this.user, {this.error});
+  final String typeOf;
+
+  Entered(this.user, {this.error, this.typeOf});
 
   @override
-  List<Object> get props => [user];
+  List<Object> get props => [user, error, typeOf];
 }
 
 class SignedOut extends AuthState {

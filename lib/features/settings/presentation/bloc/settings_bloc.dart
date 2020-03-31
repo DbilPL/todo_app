@@ -60,6 +60,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     }
 
     if (event is LoadSettingsLocal) {
+      yield LoadingSettingsState(event.prevSettings);
+
       try {
         final settings = await _getCurrentSettingsLocal(NoParams());
         yield settings.fold((failure) {
@@ -74,7 +76,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
     if (event is LoadSettingsRemote) {
       yield LoadingSettingsState(event.prevSettings);
-
       try {
         final settings = await _getCurrentSettingsRemote(event.uid);
 
@@ -84,20 +85,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           return SettingsUpdated(settings);
         });
       } catch (e) {
-        final setSettings = await _setSettingsRemote(
-            SetRemoteSettingsParams(event.uid, event.prevSettings));
-
-        yield await setSettings.fold((failure) {
-          return ConnectionFailureState(event.prevSettings);
-        }, (success) async {
-          final settings = await _getCurrentSettingsRemote(event.uid);
-
-          return settings.fold((failure) {
-            return ConnectionFailureState(event.prevSettings);
-          }, (settings) {
-            return SettingsUpdated(settings);
-          });
-        });
+        yield ConnectionFailureState(event.prevSettings);
       }
     }
 
@@ -108,9 +96,17 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         final updateSettingsOrFailure = await _setSettingsRemote(
             SetRemoteSettingsParams(event.uid, event.settings));
 
+        final setSettingsOrFailure = await _setSettingsLocal(event.settings);
+
         yield updateSettingsOrFailure.fold((failure) {
           return ConnectionFailureState(event.prevSettings);
         }, (success) {
+          return setSettingsOrFailure.fold((failure) {
+            return CacheFailureState(event.prevSettings);
+          }, (success) {
+            return SettingsUpdated(event.settings);
+          });
+
           return SettingsUpdated(event.settings);
         });
       } catch (e) {
@@ -119,6 +115,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     }
 
     if (event is SetSettingsLocalEvent) {
+      yield LoadingSettingsState(event.prevSettings);
+
       try {
         final saveSettingsOrFailure = await _setSettingsLocal(event.settings);
 

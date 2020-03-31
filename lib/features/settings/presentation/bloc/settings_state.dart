@@ -22,10 +22,14 @@ class LoadingSettingsState extends SettingsState {
 }
 
 class SettingsUpdated extends SettingsState {
-  SettingsUpdated(SettingsModel settingsModel) : super(settingsModel);
+  final String error;
+  final bool isInitial;
+
+  SettingsUpdated(SettingsModel settingsModel, {this.error, this.isInitial})
+      : super(settingsModel);
 
   @override
-  List<Object> get props => [settingsModel];
+  List<Object> get props => [settingsModel, error];
 }
 
 class ConnectionFailureState extends SettingsState {

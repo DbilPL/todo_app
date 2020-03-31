@@ -31,13 +31,19 @@ class _TodoListState extends State<TodoList> {
                     .add(ReorderListLocal(state.list, oldIndex, newIndex));
             },
           );
-        else
+        else if (state is LoadingTodoState) {
+          return Center(
+            child: CircularProgressIndicator(
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+            ),
+          );
+        } else
           return Center(
             child: Text(
               'No items!',
               style: TextStyle(
-                color: Theme.of(context).textTheme.caption.color,
-                fontSize: 25,
+                fontSize: 28,
               ),
             ),
           );

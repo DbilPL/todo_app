@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/core/methods.dart';
+import 'package:todoapp/features/authetification/presenation/bloc/auth_bloc.dart';
+import 'package:todoapp/features/authetification/presenation/bloc/bloc.dart';
 import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
 
 class TodoModalBottomSheet extends StatefulWidget {
@@ -26,12 +28,10 @@ class _TodoModalBottomSheetState extends State<TodoModalBottomSheet> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: <Widget>[
-                ListTile(
-                  title: Text(
-                    'Enter group name',
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.caption.color,
-                    ),
+                Text(
+                  'Enter group name',
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.caption.color,
                   ),
                 ),
                 TextFormField(
@@ -55,6 +55,18 @@ class _TodoModalBottomSheetState extends State<TodoModalBottomSheet> {
                       final isUserRegistered = isRegistered(context);
 
                       if (isUserRegistered) {
+                        final authState =
+                            BlocProvider.of<AuthBloc>(context).state;
+
+                        if (authState is Entered)
+                          BlocProvider.of<TodoBloc>(context).add(
+                            AddTodoGroupRemote(
+                              _controller.text,
+                              todoState.list,
+                              authState.user.props[0],
+                              widget.uniqueID,
+                            ),
+                          );
                       } else
                         BlocProvider.of<TodoBloc>(context).add(
                           AddTodoGroupLocal(

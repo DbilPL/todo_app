@@ -96,11 +96,14 @@ Future<void> init() async {
   sl.registerSingleton(SetLocalTODO(sl<LocalTODORepositoryImpl>()));
   sl.registerSingleton(
     TodoBloc(
-        sl<GetLocalTodo>(),
-        sl<SetLocalTODO>(),
-        sl<CancelNotificationLocal>(),
-        sl<SetNotificationLocal>(),
-        sl<CancelAllNotificationsLocal>()),
+      sl<GetLocalTodo>(),
+      sl<SetLocalTODO>(),
+      sl<CancelNotificationLocal>(),
+      sl<SetNotificationLocal>(),
+      sl<CancelAllNotificationsLocal>(),
+      sl<GetRemoteTODO>(),
+      sl<UpdateRemoteTODO>(),
+    ),
   );
 
   /// auth

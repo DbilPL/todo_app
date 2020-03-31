@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:todoapp/core/methods.dart';
+import 'package:todoapp/features/authetification/presenation/bloc/auth_bloc.dart';
+import 'package:todoapp/features/authetification/presenation/bloc/auth_state.dart';
 import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
 
 class TodoModalBottomSheetTodo extends StatefulWidget {
@@ -123,24 +125,43 @@ class _TodoModalBottomSheetTodoState extends State<TodoModalBottomSheetTodo> {
                         final todoState =
                             BlocProvider.of<TodoBloc>(context).state;
 
-                        final isUserRegistered = isRegistered(context);
-                        if (_titleController.text != '' &&
-                            _bodyController.text != '') if (isUserRegistered) {
-                        } else {
-                          BlocProvider.of<TodoBloc>(context).add(
-                            AddTodoToGroupLocal(
-                              widget.groupName,
-                              _titleController.text,
-                              _bodyController.text,
-                              _dateController.text,
-                              todoState.list,
-                              widget.id,
-                            ),
-                          );
-                        }
-                        else
-                          BlocProvider.of<TodoBloc>(context).add(
-                              TodoFailure('Not valid texts.', todoState.list));
+                        final authState =
+                            BlocProvider.of<AuthBloc>(context).state;
+
+                        if (authState is Entered) {
+                          final isUserRegistered = isRegistered(context);
+                          if (_titleController.text != '' &&
+                              _bodyController.text !=
+                                  '') if (isUserRegistered) {
+                            BlocProvider.of<TodoBloc>(context).add(
+                              AddTodoToGroupRemote(
+                                widget.groupName,
+                                _titleController.text,
+                                _bodyController.text,
+                                _dateController.text,
+                                todoState.list,
+                                widget.id,
+                                authState.user.props[0],
+                              ),
+                            );
+                          } else {
+                            BlocProvider.of<TodoBloc>(context).add(
+                              AddTodoToGroupLocal(
+                                widget.groupName,
+                                _titleController.text,
+                                _bodyController.text,
+                                _dateController.text,
+                                todoState.list,
+                                widget.id,
+                              ),
+                            );
+                          }
+                          else
+                            BlocProvider.of<TodoBloc>(context).add(TodoFailure(
+                                'Not valid texts.', todoState.list));
+                        } else
+                          BlocProvider.of<TodoBloc>(context).add(TodoFailure(
+                              'How did you get there?!.', todoState.list));
 
                         Navigator.of(context).pop();
                       },

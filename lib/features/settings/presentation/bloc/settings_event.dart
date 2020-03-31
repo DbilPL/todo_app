@@ -24,7 +24,7 @@ class LoadSettingsRemote extends SettingsEvent {
 
   final SettingsModel prevSettings;
 
-  LoadSettingsRemote(this.uid, this.prevSettings);
+  LoadSettingsRemote({this.uid, this.prevSettings});
 
   @override
   List<Object> get props => [uid];
@@ -35,7 +35,7 @@ class SetSettingsRemoteEvent extends SettingsEvent {
   final SettingsModel settings;
   final SettingsModel prevSettings;
 
-  SetSettingsRemoteEvent(this.settings, this.prevSettings, this.uid);
+  SetSettingsRemoteEvent({this.settings, this.prevSettings, this.uid});
 
   @override
   List<Object> get props => [settings, prevSettings, uid];

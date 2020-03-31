@@ -20,8 +20,7 @@ class TodoRemoteRepositoryImpl extends RemoteTODORepository {
         return Left(FirebaseFailure('Something went wrong!'));
       }
     } else
-      return Left(ConnectionFailure(
-          'You have not connection to internet! Arriving on local memory.'));
+      return Left(ConnectionFailure('You have not connection to internet!'));
   }
 
   @override
@@ -36,8 +35,7 @@ class TodoRemoteRepositoryImpl extends RemoteTODORepository {
         return Left(FirebaseFailure('Something went wrong!'));
       }
     } else
-      return Left(ConnectionFailure(
-          'You have not connection to internet! Arriving on local memory.'));
+      return Left(ConnectionFailure('You have not connection to internet!'));
   }
 }
 

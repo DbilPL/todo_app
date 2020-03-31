@@ -19,8 +19,8 @@ class UsualUserModel extends UserModel {
 
   Map<String, dynamic> toJSON() {
     return {
-      "email": this.email,
-      "password": this.password,
+      'email': this.email,
+      'password': this.password,
     };
   }
 

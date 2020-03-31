@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/core/methods.dart';
+import 'package:todoapp/features/authetification/presenation/bloc/auth_bloc.dart';
+import 'package:todoapp/features/authetification/presenation/bloc/auth_state.dart';
 import 'package:todoapp/features/todo/data/model/todo_list_model.dart';
 import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
 import 'package:todoapp/features/todo/presentation/widgets/todo_modal_bottom_sheet_todo.dart';
@@ -65,51 +67,66 @@ class _TodoGroupViewState extends State<TodoGroupView> {
                     fontSize: 20,
                   ),
                 ),
-                Row(
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        final isUserRegistered = isRegistered(context);
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) => Row(
+                    children: <Widget>[
+                      GestureDetector(
+                        onTap: () {
+                          if (state is Entered) {
+                            final isUserRegistered = isRegistered(context);
 
-                        if (isUserRegistered) {
-                        } else
-                          BlocProvider.of<TodoBloc>(context).add(
-                            DeleteTodoGroupLocal(
-                              widget.todos.groupName,
-                              BlocProvider.of<TodoBloc>(context).state.list,
-                              ids,
-                            ),
+                            if (isUserRegistered) {
+                              BlocProvider.of<TodoBloc>(context).add(
+                                DeleteTodoGroupRemote(
+                                  widget.todos.groupName,
+                                  BlocProvider.of<TodoBloc>(context).state.list,
+                                  ids,
+                                  state.user.props[0],
+                                ),
+                              );
+                            } else
+                              BlocProvider.of<TodoBloc>(context).add(
+                                DeleteTodoGroupLocal(
+                                  widget.todos.groupName,
+                                  BlocProvider.of<TodoBloc>(context).state.list,
+                                  ids,
+                                ),
+                              );
+                          }
+                        },
+                        child: Icon(
+                          Icons.cancel,
+                          color: Theme.of(context).backgroundColor,
+                          size: 19,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return TodoModalBottomSheetTodo(
+                                widget.todos.groupName,
+                                widget.todos.todoList.length +
+                                    widget.todos.uniqueID,
+                              );
+                            },
                           );
-                      },
-                      child: Icon(
-                        Icons.cancel,
-                        color: Theme.of(context).backgroundColor,
-                        size: 19,
+                        },
+                        child: Icon(
+                          Icons.border_color,
+                          color: Theme.of(context).backgroundColor,
+                          size: 19,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) {
-                            return TodoModalBottomSheetTodo(
-                              widget.todos.groupName,
-                              widget.todos.todoList.length +
-                                  widget.todos.uniqueID,
-                            );
-                          },
-                        );
-                      },
-                      child: Icon(
-                        Icons.border_color,
-                        color: Theme.of(context).backgroundColor,
-                        size: 19,
+                      SizedBox(
+                        width: 20,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),

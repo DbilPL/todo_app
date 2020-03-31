@@ -51,7 +51,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             return FailureState(failure.error);
         }, (user) {
           print('sign in auto');
-          return Entered(user);
+          return Entered(user, typeOf: 'auto');
         });
       } catch (e) {
         print(e.toString());
@@ -73,7 +73,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               return FailureState(failure.error);
             }, (user) {
               print('registered');
-              return Entered(user);
+              return Entered(user, typeOf: 'register');
             });
           } else
             yield InputFailure('Password does not match!');
@@ -94,7 +94,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             return FirebaseFailureState(failure.error);
           }, (user) {
             print('sign in');
-            return Entered(user);
+            return Entered(user, typeOf: 'sign in');
           });
         } else
           yield InputFailure('Password shall contain at least 6 chars!');
