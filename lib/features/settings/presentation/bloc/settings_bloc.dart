@@ -106,8 +106,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           }, (success) {
             return SettingsUpdated(event.settings);
           });
-
-          return SettingsUpdated(event.settings);
         });
       } catch (e) {
         yield ConnectionFailureState(event.prevSettings);

@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:todoapp/features/notifications/data/models/notifications_model.dart';
-import 'package:todoapp/features/notifications/domain/usecases/cancel_all_notifications_local.dart';
-import 'package:todoapp/features/notifications/domain/usecases/cancel_notification_local.dart';
-import 'package:todoapp/features/notifications/domain/usecases/set_notification_local.dart';
+import 'package:todoapp/features/notifications/domain/usecases/cancel_all_notifications.dart';
+import 'package:todoapp/features/notifications/domain/usecases/cancel_notification.dart';
+import 'package:todoapp/features/notifications/domain/usecases/set_notification.dart';
 import 'package:todoapp/features/settings/domain/usecases/get_current_settings_local.dart';
 import 'package:todoapp/features/todo/data/model/todo_list_model.dart';
 import 'package:todoapp/features/todo/data/model/todo_model.dart';

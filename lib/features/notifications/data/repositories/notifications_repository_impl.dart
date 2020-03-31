@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:todoapp/core/errors/failure.dart';
-import 'package:todoapp/features/notifications/data/datasource/local_notifications_datasource.dart';
+import 'package:todoapp/features/notifications/data/datasource/notifications_datasource.dart';
 import 'package:todoapp/features/notifications/domain/entities/notification.dart';
-import 'package:todoapp/features/notifications/domain/repositories/notifications_repository_local.dart';
+import 'package:todoapp/features/notifications/domain/repositories/notifications_repository.dart';
 
-class LocalNotificationsRepositoryImpl extends NotificationsRepositoryLocal {
+class LocalNotificationsRepositoryImpl extends NotificationsRepository {
   final LocalNotificationsDatasourceImpl datasourceImpl;
 
   LocalNotificationsRepositoryImpl(this.datasourceImpl);

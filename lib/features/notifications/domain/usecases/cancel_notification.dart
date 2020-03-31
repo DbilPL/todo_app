@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:todoapp/core/errors/failure.dart';
 import 'package:todoapp/core/usecases/usecase.dart';
-import 'package:todoapp/features/notifications/domain/repositories/notifications_repository_local.dart';
+import 'package:todoapp/features/notifications/domain/repositories/notifications_repository.dart';
 
 class CancelNotificationLocal extends UseCase<void, int> {
-  final NotificationsRepositoryLocal notificationsRepositoryLocal;
+  final NotificationsRepository notificationsRepositoryLocal;
 
   CancelNotificationLocal(this.notificationsRepositoryLocal);
   @override

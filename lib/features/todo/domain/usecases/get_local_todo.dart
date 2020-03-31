@@ -3,10 +3,10 @@ import 'package:todoapp/core/errors/failure.dart';
 import 'package:todoapp/core/usecases/usecase.dart';
 import 'package:todoapp/features/settings/domain/usecases/get_current_settings_local.dart';
 import 'package:todoapp/features/todo/data/model/todo_list_model.dart';
-import 'package:todoapp/features/todo/data/repository/local_todo_repository_impl.dart';
+import 'package:todoapp/features/todo/domain/repositories/local_todo_repository.dart';
 
 class GetLocalTodo extends UseCase<List<TODOGroupModel>, NoParams> {
-  final LocalTODORepositoryImpl repositoryImpl;
+  final LocalTODORepository repositoryImpl;
 
   GetLocalTodo(this.repositoryImpl);
 

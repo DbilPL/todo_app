@@ -44,9 +44,6 @@ class _TodoPageState extends State<TodoPage> {
             if (state is SignedOut) {
               Navigator.of(context).pushReplacementNamed('/auth');
             }
-            if (state is Entered) {
-              final isUserRegistered = isRegistered(context);
-            }
           },
           child: BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {

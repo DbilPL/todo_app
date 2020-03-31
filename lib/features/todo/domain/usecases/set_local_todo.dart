@@ -2,10 +2,10 @@ import 'package:dartz/dartz.dart';
 import 'package:todoapp/core/errors/failure.dart';
 import 'package:todoapp/core/usecases/usecase.dart';
 import 'package:todoapp/features/todo/data/model/todo_list_model.dart';
-import 'package:todoapp/features/todo/data/repository/local_todo_repository_impl.dart';
+import 'package:todoapp/features/todo/domain/repositories/local_todo_repository.dart';
 
 class SetLocalTODO extends UseCase<void, List<TODOGroupModel>> {
-  final LocalTODORepositoryImpl repositoryImpl;
+  final LocalTODORepository repositoryImpl;
 
   SetLocalTODO(this.repositoryImpl);
   @override

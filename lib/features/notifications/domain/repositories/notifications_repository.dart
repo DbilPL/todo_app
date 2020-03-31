@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:todoapp/core/errors/failure.dart';
 import 'package:todoapp/features/notifications/domain/entities/notification.dart';
 
-abstract class NotificationsRepositoryLocal {
+abstract class NotificationsRepository {
   Future<Either<Failure, void>> setNotification(Notification notification);
 
   Future<Either<Failure, void>> cancelNotification(int id);
