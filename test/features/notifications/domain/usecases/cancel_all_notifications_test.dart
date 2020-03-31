@@ -27,7 +27,7 @@ void main() {
       ),
     );
 
-    final result = usecase(NoParams());
+    final result = await usecase(NoParams());
 
     expect(result, Right(doSomething()));
 
