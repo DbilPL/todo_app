@@ -54,7 +54,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
           final setTodoOrFailure = await _setLocalTODO([]);
 
           return setTodoOrFailure.fold((failure) {
-            return FailureTodoState(failure.error, []);
+            return FailureTodoStateInitial(failure.error, []);
           }, (success) {
             return TodoUpdated([]);
           });
@@ -79,7 +79,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       final loadTodo = await _getRemoteTODO(event.uid);
 
       yield loadTodo.fold((failure) {
-        return FailureTodoState(failure.error, prevList);
+        return FailureTodoStateInitial(failure.error, prevList);
       }, (todos) {
         return TodoUpdated(todos);
       });
@@ -112,6 +112,32 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         newList[newIndex] = oldItem;
 
         final saveOrFailure = await _setLocalTODO(newList);
+
+        yield saveOrFailure.fold((failure) {
+          return FailureTodoState(failure.error, prevList);
+        }, (success) {
+          return TodoUpdated(newList);
+        });
+      }
+    }
+
+    if (event is ReorderListRemote) {
+      if (event.oldIndex == (event.newIndex - 1)) {
+        yield TodoUpdated(event.list);
+      } else {
+        final newList = event.list;
+
+        final newIndex =
+            event.newIndex > 1 ? event.newIndex - 1 : event.newIndex;
+
+        final oldItem = newList[event.oldIndex];
+
+        newList[event.oldIndex] = newList[newIndex];
+
+        newList[newIndex] = oldItem;
+
+        final saveOrFailure =
+            await _updateRemoteTODO(TODORemoteParams(newList, event.uid));
 
         yield saveOrFailure.fold((failure) {
           return FailureTodoState(failure.error, prevList);
@@ -391,6 +417,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
                     NotificationModel(newTodo, event.id));
 
                 return notificationOrSuccess.fold((failure) {
+                  print('failure');
                   return FailureTodoState(failure.error, prevList);
                 }, (success) {
                   return TodoUpdated(list);

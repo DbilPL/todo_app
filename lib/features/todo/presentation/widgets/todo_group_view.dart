@@ -23,11 +23,10 @@ class _TodoGroupViewState extends State<TodoGroupView> {
 
   @override
   void initState() {
-    ids = List(widget.todos.todoList.length);
-
-    for (int i = 0; i < widget.todos.todoList.length; i++) {
-      ids[i] = widget.todos.uniqueID + i;
-    }
+    ids = List.generate(widget.todos.todoList.length, (index) {
+      print(widget.todos.todoList[index].title);
+      return widget.todos.uniqueID + (index);
+    });
     super.initState();
   }
 
@@ -97,7 +96,7 @@ class _TodoGroupViewState extends State<TodoGroupView> {
                         child: Icon(
                           Icons.cancel,
                           color: Theme.of(context).backgroundColor,
-                          size: 19,
+                          size: 23,
                         ),
                       ),
                       SizedBox(
@@ -119,11 +118,11 @@ class _TodoGroupViewState extends State<TodoGroupView> {
                         child: Icon(
                           Icons.border_color,
                           color: Theme.of(context).backgroundColor,
-                          size: 19,
+                          size: 23,
                         ),
                       ),
                       SizedBox(
-                        width: 20,
+                        width: 10,
                       ),
                     ],
                   ),
@@ -131,7 +130,7 @@ class _TodoGroupViewState extends State<TodoGroupView> {
               ],
             ),
           ]..addAll(
-              widget.todos.todoList.length != 0
+              widget.todos.todoList.length > 0
                   ? Iterable.generate(widget.todos.todoList.length, (index) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 4.0, top: 4.0),

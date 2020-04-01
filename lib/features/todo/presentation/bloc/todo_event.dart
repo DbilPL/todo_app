@@ -192,6 +192,17 @@ class ReorderListLocal extends TodoEvent {
   List<Object> get props => [list, oldIndex, newIndex];
 }
 
+class ReorderListRemote extends TodoEvent {
+  final List<TODOGroupModel> list;
+  final int oldIndex, newIndex;
+  final String uid;
+  ReorderListRemote(this.list, this.oldIndex, this.newIndex, this.uid)
+      : super(list);
+
+  @override
+  List<Object> get props => [list, oldIndex, newIndex];
+}
+
 class AddTodoGroupLocal extends TodoEvent {
   final String title;
   final List<TODOGroupModel> prevList;

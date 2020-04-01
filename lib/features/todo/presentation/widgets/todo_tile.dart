@@ -104,28 +104,13 @@ class _TodoTileState extends State<TodoTile> {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        Hero(
-                          tag: todo.title,
-                          flightShuttleBuilder: (
-                            BuildContext flightContext,
-                            Animation<double> animation,
-                            HeroFlightDirection flightDirection,
-                            BuildContext fromHeroContext,
-                            BuildContext toHeroContext,
-                          ) {
-                            return DefaultTextStyle(
-                              style: DefaultTextStyle.of(toHeroContext).style,
-                              child: toHeroContext.widget,
-                            );
-                          },
-                          child: Text(
-                            todo.title.length > 15
-                                ? todo.title.substring(0, 13) + '...'
-                                : todo.title,
-                            style: TextStyle(
-                              fontSize: 22,
-                              color: Theme.of(context).primaryColor,
-                            ),
+                        Text(
+                          todo.title.length > 15
+                              ? todo.title.substring(0, 13) + '...'
+                              : todo.title,
+                          style: TextStyle(
+                            fontSize: 22,
+                            color: Theme.of(context).primaryColor,
                           ),
                         ),
                         SizedBox(
@@ -151,26 +136,11 @@ class _TodoTileState extends State<TodoTile> {
                         : Text(''),
                   ],
                 ),
-                Hero(
-                  tag: todo.body,
-                  flightShuttleBuilder: (
-                    BuildContext flightContext,
-                    Animation<double> animation,
-                    HeroFlightDirection flightDirection,
-                    BuildContext fromHeroContext,
-                    BuildContext toHeroContext,
-                  ) {
-                    return DefaultTextStyle(
-                      style: DefaultTextStyle.of(toHeroContext).style,
-                      child: toHeroContext.widget,
-                    );
-                  },
-                  child: Text(
-                    todo.body,
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontSize: 16,
-                    ),
+                Text(
+                  todo.body,
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontSize: 16,
                   ),
                 ),
                 SizedBox(

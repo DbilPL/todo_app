@@ -33,14 +33,11 @@ class _TodoTileViewPageState extends State<TodoTileViewPage> {
                 color: Theme.of(context).primaryColor,
               ),
             ),
-            Hero(
-              tag: widget.todo.title,
-              child: Text(
-                widget.todo.title,
-                style: TextStyle(
-                  fontSize: 23,
-                  color: Theme.of(context).textTheme.caption.color,
-                ),
+            Text(
+              widget.todo.title,
+              style: TextStyle(
+                fontSize: 23,
+                color: Theme.of(context).textTheme.caption.color,
               ),
             ),
             Text(
@@ -50,14 +47,11 @@ class _TodoTileViewPageState extends State<TodoTileViewPage> {
                 color: Theme.of(context).primaryColor,
               ),
             ),
-            Hero(
-              tag: widget.todo.body,
-              child: Text(
-                widget.todo.body,
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Theme.of(context).textTheme.caption.color,
-                ),
+            Text(
+              widget.todo.body,
+              style: TextStyle(
+                fontSize: 20,
+                color: Theme.of(context).textTheme.caption.color,
               ),
             ),
             Text(

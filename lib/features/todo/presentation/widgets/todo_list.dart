@@ -28,13 +28,17 @@ class _TodoListState extends State<TodoList> {
             onReorder: (int oldIndex, int newIndex) {
               final isUserRegistered = isRegistered(context);
 
-              if (isUserRegistered) {
+              final authState = BlocProvider.of<AuthBloc>(context).state;
+
+              if (authState is Entered) if (isUserRegistered) {
+                BlocProvider.of<TodoBloc>(context).add(ReorderListRemote(
+                    state.list, oldIndex, newIndex, authState.user.props[0]));
               } else
                 BlocProvider.of<TodoBloc>(context)
                     .add(ReorderListLocal(state.list, oldIndex, newIndex));
             },
           );
-        else if (state is FailureTodoState) {
+        else if (state is FailureTodoStateInitial) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

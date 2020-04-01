@@ -17,6 +17,16 @@ class FailureTodoState extends TodoState {
   List<Object> get props => [error];
 }
 
+class FailureTodoStateInitial extends TodoState {
+  final String error;
+  final List<TODOGroupModel> list;
+
+  FailureTodoStateInitial(this.error, this.list) : super(list);
+
+  @override
+  List<Object> get props => [error];
+}
+
 class AreYouSureForDeletingAllTodo extends TodoState {
   AreYouSureForDeletingAllTodo(List<TODOGroupModel> list) : super(list);
 
