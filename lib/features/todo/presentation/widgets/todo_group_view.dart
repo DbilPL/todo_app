@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/core/methods.dart';
+import 'package:todoapp/features/authetification/data/model/user_model.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_bloc.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_state.dart';
 import 'package:todoapp/features/todo/data/model/todo_list_model.dart';
@@ -12,7 +13,7 @@ import 'package:todoapp/features/todo/presentation/widgets/todo_tile.dart';
 class TodoGroupView extends StatefulWidget {
   final TODOGroupModel todos;
 
-  TodoGroupView({Key key, this.todos}) : super(key: key);
+  const TodoGroupView({Key key, this.todos}) : super(key: key);
 
   @override
   _TodoGroupViewState createState() => _TodoGroupViewState();
@@ -24,8 +25,7 @@ class _TodoGroupViewState extends State<TodoGroupView> {
   @override
   void initState() {
     ids = List.generate(widget.todos.todoList.length, (index) {
-      print(widget.todos.todoList[index].title);
-      return widget.todos.uniqueID + (index);
+      return widget.todos.uniqueID + index;
     });
     super.initState();
   }
@@ -75,15 +75,17 @@ class _TodoGroupViewState extends State<TodoGroupView> {
                             final isUserRegistered = isRegistered(context);
 
                             if (isUserRegistered) {
+                              final user = state.user as UsualUserModel;
+
                               BlocProvider.of<TodoBloc>(context).add(
                                 DeleteTodoGroupRemote(
                                   widget.todos.groupName,
                                   BlocProvider.of<TodoBloc>(context).state.list,
                                   ids,
-                                  state.user.props[0],
+                                  user.uid,
                                 ),
                               );
-                            } else
+                            } else {
                               BlocProvider.of<TodoBloc>(context).add(
                                 DeleteTodoGroupLocal(
                                   widget.todos.groupName,
@@ -91,6 +93,7 @@ class _TodoGroupViewState extends State<TodoGroupView> {
                                   ids,
                                 ),
                               );
+                            }
                           }
                         },
                         child: Icon(
@@ -99,7 +102,7 @@ class _TodoGroupViewState extends State<TodoGroupView> {
                           size: 23,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 20,
                       ),
                       GestureDetector(
@@ -121,7 +124,7 @@ class _TodoGroupViewState extends State<TodoGroupView> {
                           size: 23,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                     ],
@@ -130,7 +133,7 @@ class _TodoGroupViewState extends State<TodoGroupView> {
               ],
             ),
           ]..addAll(
-              widget.todos.todoList.length > 0
+              widget.todos.todoList.isNotEmpty
                   ? Iterable.generate(widget.todos.todoList.length, (index) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 4.0, top: 4.0),

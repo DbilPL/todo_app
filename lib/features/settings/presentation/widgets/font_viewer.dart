@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class FontViewer extends StatelessWidget {
   final String font;
 
-  final Function onTap;
+  final void Function() onTap;
 
   const FontViewer({Key key, this.font, this.onTap}) : super(key: key);
 

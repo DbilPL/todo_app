@@ -11,6 +11,6 @@ class CancelAllNotificationsLocal extends UseCase<void, NoParams> {
 
   @override
   Future<Either<Failure, void>> call(NoParams params) async {
-    return await notificationsRepositoryLocal.cancelAllNotifications();
+    return notificationsRepositoryLocal.cancelAllNotifications();
   }
 }

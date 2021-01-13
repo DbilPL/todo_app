@@ -14,23 +14,26 @@ abstract class TODOLocalDatasource {
   Future<void> setCurrentTODO(List<TODOGroupModel> todogModel);
 }
 
-const String TODO_KEY = 'todo';
+const String _todoKey = 'todo';
 
 class TODOLocalDatasourceImpl implements TODOLocalDatasource {
-  final SharedPreferences storage;
+  final SharedPreferences _storage;
 
-  TODOLocalDatasourceImpl(this.storage);
+  TODOLocalDatasourceImpl(this._storage);
 
   @override
   List<TODOGroupModel> getCurrentTODO() {
-    List<TODOGroupModel> list = [];
-    final todo = storage.getStringList(TODO_KEY);
+    final List<TODOGroupModel> list = [];
+
+    final todo = _storage.getStringList(_todoKey);
 
     if (todo != null) {
       for (int i = 0; i < todo.length; i++) {
+        final map = json.decode(todo[i]) as Map<String, dynamic>;
+
         list.add(
           TODOGroupModel.fromJson(
-            json.decode(todo[i]),
+            map,
           ),
         );
       }
@@ -41,17 +44,15 @@ class TODOLocalDatasourceImpl implements TODOLocalDatasource {
 
   @override
   Future<void> setCurrentTODO(List<TODOGroupModel> todogModel) async {
-    List<String> todo = List.generate(
+    final List<String> todo = List.generate(
       todogModel.length,
       (index) {
-        return json.encode(
-          todogModel[index].toJson(),
-        );
+        final mapStr = todogModel[index].toJson();
+
+        return json.encode(mapStr);
       },
     );
 
-    print('set');
-
-    await storage.setStringList(TODO_KEY, todo);
+    await _storage.setStringList(_todoKey, todo);
   }
 }

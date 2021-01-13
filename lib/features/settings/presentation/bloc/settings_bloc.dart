@@ -60,71 +60,81 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     }
 
     if (event is LoadSettingsLocal) {
-      yield LoadingSettingsState(event.prevSettings);
+      final prevSettings = event.prevSettings;
+
+      yield LoadingSettingsState(prevSettings);
 
       try {
         final settings = await _getCurrentSettingsLocal(NoParams());
         yield settings.fold((failure) {
-          return CacheFailureState(event.prevSettings);
-        }, (settings) {
-          return SettingsUpdated(settings);
+          return CacheFailureState(prevSettings);
+        }, (seti) {
+          return SettingsUpdated(seti);
         });
       } catch (e) {
-        yield CacheFailureState(event.prevSettings);
+        yield CacheFailureState(prevSettings);
       }
     }
 
     if (event is LoadSettingsRemote) {
-      yield LoadingSettingsState(event.prevSettings);
+      final prevSettings = event.prevSettings;
+
+      yield LoadingSettingsState(prevSettings);
       try {
         final settings = await _getCurrentSettingsRemote(event.uid);
 
         yield await settings.fold((failure) async {
-          return ConnectionFailureState(event.prevSettings);
+          return ConnectionFailureState(prevSettings);
         }, (settings) {
           return SettingsUpdated(settings);
         });
       } catch (e) {
-        yield ConnectionFailureState(event.prevSettings);
+        yield ConnectionFailureState(prevSettings);
       }
     }
 
     if (event is SetSettingsRemoteEvent) {
-      yield LoadingSettingsState(event.prevSettings);
+      final prevSettings = event.prevSettings;
+      final settings = event.settings;
+
+      yield LoadingSettingsState(prevSettings);
 
       try {
         final updateSettingsOrFailure = await _setSettingsRemote(
-            SetRemoteSettingsParams(event.uid, event.settings));
+            SetRemoteSettingsParams(event.uid, settings));
 
-        final setSettingsOrFailure = await _setSettingsLocal(event.settings);
+        final setSettingsOrFailure = await _setSettingsLocal(settings);
 
         yield updateSettingsOrFailure.fold((failure) {
-          return ConnectionFailureState(event.prevSettings);
+          return ConnectionFailureState(prevSettings);
         }, (success) {
           return setSettingsOrFailure.fold((failure) {
-            return CacheFailureState(event.prevSettings);
+            return CacheFailureState(prevSettings);
           }, (success) {
-            return SettingsUpdated(event.settings);
+            return SettingsUpdated(settings);
           });
         });
       } catch (e) {
-        yield ConnectionFailureState(event.prevSettings);
+        yield ConnectionFailureState(prevSettings);
       }
     }
 
     if (event is SetSettingsLocalEvent) {
-      yield LoadingSettingsState(event.prevSettings);
+      final prevSettings = event.prevSettings;
+      final settings = event.settings;
+
+      yield LoadingSettingsState(prevSettings);
 
       try {
-        final saveSettingsOrFailure = await _setSettingsLocal(event.settings);
+        final saveSettingsOrFailure = await _setSettingsLocal(settings);
 
         yield saveSettingsOrFailure.fold((failure) {
-          return CacheFailureState(event.prevSettings);
+          return CacheFailureState(prevSettings);
         }, (success) {
-          return SettingsUpdated(event.settings);
+          return SettingsUpdated(settings);
         });
       } catch (e) {
-        yield CacheFailureState(event.prevSettings);
+        yield CacheFailureState(prevSettings);
       }
     }
   }

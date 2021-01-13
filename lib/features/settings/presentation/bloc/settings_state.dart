@@ -8,14 +8,16 @@ abstract class SettingsState extends Equatable {
 }
 
 class InitialSettingsState extends SettingsState {
-  InitialSettingsState(SettingsModel settingsModel) : super(settingsModel);
+  const InitialSettingsState(SettingsModel settingsModel)
+      : super(settingsModel);
 
   @override
   List<Object> get props => [settingsModel];
 }
 
 class LoadingSettingsState extends SettingsState {
-  LoadingSettingsState(SettingsModel settingsModel) : super(settingsModel);
+  const LoadingSettingsState(SettingsModel settingsModel)
+      : super(settingsModel);
 
   @override
   List<Object> get props => [settingsModel];
@@ -25,7 +27,8 @@ class SettingsUpdated extends SettingsState {
   final String error;
   final bool isInitial;
 
-  SettingsUpdated(SettingsModel settingsModel, {this.error, this.isInitial})
+  const SettingsUpdated(SettingsModel settingsModel,
+      {this.error, this.isInitial})
       : super(settingsModel);
 
   @override
@@ -33,28 +36,29 @@ class SettingsUpdated extends SettingsState {
 }
 
 class ConnectionFailureState extends SettingsState {
-  ConnectionFailureState(SettingsModel settingsModel) : super(settingsModel);
+  const ConnectionFailureState(SettingsModel settingsModel)
+      : super(settingsModel);
 
   @override
   List<Object> get props => [settingsModel];
 }
 
 class FirstRunState extends SettingsState {
-  FirstRunState(SettingsModel settingsModel) : super(settingsModel);
+  const FirstRunState(SettingsModel settingsModel) : super(settingsModel);
 
   @override
   List<Object> get props => [settingsModel];
 }
 
 class AlreadyRunned extends SettingsState {
-  AlreadyRunned(SettingsModel settingsModel) : super(settingsModel);
+  const AlreadyRunned(SettingsModel settingsModel) : super(settingsModel);
 
   @override
   List<Object> get props => [settingsModel];
 }
 
 class CacheFailureState extends SettingsState {
-  CacheFailureState(SettingsModel settingsModel) : super(settingsModel);
+  const CacheFailureState(SettingsModel settingsModel) : super(settingsModel);
 
   @override
   List<Object> get props => [settingsModel];

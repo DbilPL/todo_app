@@ -7,10 +7,12 @@ import 'package:todoapp/features/authetification/presenation/bloc/auth_state.dar
 bool isRegistered(BuildContext context) {
   final state = BlocProvider.of<AuthBloc>(context).state;
   if (state is Entered) {
-    if (state.user is UsualUserModel)
+    if (state.user is UsualUserModel) {
       return true;
-    else
+    } else {
       return false;
-  } else
+    }
+  } else {
     return false;
+  }
 }

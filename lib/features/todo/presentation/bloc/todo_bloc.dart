@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
+import 'package:todoapp/core/errors/failure.dart';
 import 'package:todoapp/features/notifications/data/models/notifications_model.dart';
 import 'package:todoapp/features/notifications/domain/usecases/cancel_all_notifications.dart';
 import 'package:todoapp/features/notifications/domain/usecases/cancel_notification.dart';
@@ -59,12 +61,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
             return TodoUpdated([]);
           });
         }, (todos) {
-          print('success');
           return TodoUpdated(todos);
         });
       } catch (e) {
-        print('no data');
-
         final setTodoOrFailure = await _setLocalTODO([]);
 
         yield setTodoOrFailure.fold((failure) {
@@ -171,16 +170,15 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
         yield setTodoOrFailure.fold(
           (failure) {
-            print('something went wrong!');
             return FailureTodoState(failure.error, prevList);
           },
           (success) {
-            print('success');
             return TodoUpdated(newList);
           },
         );
-      } else
+      } else {
         yield FailureTodoState('This group already exist!', prevList);
+      }
     }
 
     if (event is AddTodoGroupRemote) {
@@ -195,8 +193,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       }
 
       if (!isExist) {
-        print(event.prevList);
-
         final newList = List<TODOGroupModel>.from(event.prevList);
 
         newList.add(
@@ -206,8 +202,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
             event.uniqueID,
           ),
         );
-
-        print(prevList);
 
         final setTodoOrFailure =
             await _updateRemoteTODO(TODORemoteParams(newList, event.uid));
@@ -219,8 +213,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
             return TodoUpdated(newList);
           },
         );
-      } else
+      } else {
         yield FailureTodoState('This group already exist!', prevList);
+      }
     }
 
     if (event is TodoFailure) {
@@ -253,10 +248,11 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       yield await setOrSuccess.fold((failure) {
         return FailureTodoState('Something went wrong! Try again!', prevList);
       }, (success) async {
-        if (!isError)
+        if (!isError) {
           return TodoUpdated(list);
-        else
+        } else {
           return FailureTodoState('Something went wrong! Try again!', prevList);
+        }
       });
     }
 
@@ -287,10 +283,11 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       yield await setOrSuccess.fold((failure) {
         return FailureTodoState('Something went wrong! Try again!', prevList);
       }, (success) async {
-        if (!isError)
+        if (!isError) {
           return TodoUpdated(list);
-        else
+        } else {
           return FailureTodoState('Something went wrong! Try again!', prevList);
+        }
       });
     }
 
@@ -309,13 +306,13 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
                 date[3],
                 date[4],
               )
-            : date,
+            : null,
         isComplete: false,
       );
 
       bool isExist = false;
 
-      List<TODOGroupModel> list = event.list;
+      final List<TODOGroupModel> list = event.list;
 
       for (int i = 0; i < event.list.length; i++) {
         if (event.list[i].groupName == event.groupName) {
@@ -340,7 +337,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
           yield await setOrSuccess.fold(
             (failure) {
-              print('failure');
               return FailureTodoState(failure.error, prevList);
             },
             (success) async {
@@ -353,8 +349,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
                 }, (success) {
                   return TodoUpdated(list);
                 });
-              } else
+              } else {
                 return TodoUpdated(list);
+              }
             },
           );
         }
@@ -376,13 +373,13 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
                 date[3],
                 date[4],
               )
-            : date,
+            : null,
         isComplete: false,
       );
 
       bool isExist = false;
 
-      List<TODOGroupModel> list = event.list;
+      final List<TODOGroupModel> list = event.list;
 
       for (int i = 0; i < event.list.length; i++) {
         if (event.list[i].groupName == event.groupName) {
@@ -408,7 +405,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
           yield await setOrSuccess.fold(
             (failure) {
-              print('failure');
               return FailureTodoState(failure.error, prevList);
             },
             (success) async {
@@ -417,13 +413,13 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
                     NotificationModel(newTodo, event.id));
 
                 return notificationOrSuccess.fold((failure) {
-                  print('failure');
                   return FailureTodoState(failure.error, prevList);
                 }, (success) {
                   return TodoUpdated(list);
                 });
-              } else
+              } else {
                 return TodoUpdated(list);
+              }
             },
           );
         }
@@ -431,9 +427,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     }
 
     if (event is DeleteAllTodoLocal) {
-      if (!event.areYouSure)
+      if (!event.areYouSure) {
         yield AreYouSureForDeletingAllTodo(prevList);
-      else {
+      } else {
         final deleteOrSuccess = await _setLocalTODO([]);
 
         final delete = await _cancelAllNotificationsLocal(NoParams());
@@ -451,9 +447,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     }
 
     if (event is DeleteAllTodoRemote) {
-      if (!event.areYouSure)
+      if (!event.areYouSure) {
         yield AreYouSureForDeletingAllTodo(prevList);
-      else {
+      } else {
         final deleteOrSuccess =
             await _updateRemoteTODO(TODORemoteParams([], event.uid));
 
@@ -472,13 +468,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     }
 
     if (event is TodoChangeStatusLocal) {
-      List<TODOGroupModel> list = event.list;
-      final newTodo = TODOModel(
-        title: event.todo.title,
-        body: event.todo.body,
-        date: event.todo.date,
-        isComplete: !event.todo.isComplete,
-      );
+      final List<TODOGroupModel> list = event.list;
+      final newTodo = event.todo.copyWith(isComplete: !event.todo.isComplete);
 
       for (int j = 0; j < list.length; j++) {
         final todos = list[j];
@@ -517,19 +508,15 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
               return TodoUpdated(list);
             });
           }
-        } else
+        } else {
           return TodoUpdated(list);
+        }
       });
     }
 
     if (event is TodoChangeStatusRemote) {
-      List<TODOGroupModel> list = event.list;
-      final newTodo = TODOModel(
-        title: event.todo.title,
-        body: event.todo.body,
-        date: event.todo.date,
-        isComplete: !event.todo.isComplete,
-      );
+      final List<TODOGroupModel> list = event.list;
+      final newTodo = event.todo.copyWith(isComplete: !event.todo.isComplete);
 
       for (int j = 0; j < list.length; j++) {
         final todos = list[j];
@@ -569,8 +556,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
               return TodoUpdated(list);
             });
           }
-        } else
+        } else {
           return TodoUpdated(list);
+        }
       });
     }
 
@@ -594,20 +582,21 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
       final setOrSuccess = await _setLocalTODO(list);
 
-      var delete;
+      Either<Failure, void> delete;
 
       if (isDateExist) delete = await _cancelNotificationLocal(event.id);
 
       yield setOrSuccess.fold(
           (failure) => FailureTodoState(failure.error, prevList), (success) {
-        if (isDateExist)
+        if (isDateExist) {
           return delete.fold((failure) {
             return FailureTodoState(failure.error, prevList);
           }, (success) {
             return TodoUpdated(list);
           });
-        else
+        } else {
           return TodoUpdated(list);
+        }
       });
     }
 
@@ -632,20 +621,21 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       final setOrSuccess =
           await _updateRemoteTODO(TODORemoteParams(list, event.uid));
 
-      var delete;
+      Either<Failure, void> delete;
 
       if (isDateExist) delete = await _cancelNotificationLocal(event.id);
 
       yield setOrSuccess.fold(
           (failure) => FailureTodoState(failure.error, prevList), (success) {
-        if (isDateExist)
+        if (isDateExist) {
           return delete.fold((failure) {
             return FailureTodoState(failure.error, prevList);
           }, (success) {
             return TodoUpdated(list);
           });
-        else
+        } else {
           return TodoUpdated(list);
+        }
       });
     }
   }

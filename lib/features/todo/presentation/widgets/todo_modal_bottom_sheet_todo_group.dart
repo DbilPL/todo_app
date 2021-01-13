@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/core/methods.dart';
+import 'package:todoapp/features/authetification/data/model/user_model.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_bloc.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/bloc.dart';
 import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
@@ -15,13 +16,20 @@ class TodoModalBottomSheet extends StatefulWidget {
 }
 
 class _TodoModalBottomSheetState extends State<TodoModalBottomSheet> {
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       child: Container(
         height: 820,
+        decoration: const BoxDecoration(
+          color: Color(0xfff8f8f8),
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(20),
+            topLeft: Radius.circular(20),
+          ),
+        ),
         child: Container(
           color: Theme.of(context).backgroundColor,
           child: Padding(
@@ -39,7 +47,7 @@ class _TodoModalBottomSheetState extends State<TodoModalBottomSheet> {
                   style: TextStyle(
                     color: Theme.of(context).textTheme.caption.color,
                   ),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Title',
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey, width: 1),
@@ -58,16 +66,19 @@ class _TodoModalBottomSheetState extends State<TodoModalBottomSheet> {
                         final authState =
                             BlocProvider.of<AuthBloc>(context).state;
 
-                        if (authState is Entered)
+                        if (authState is Entered) {
+                          final user = authState.user as UsualUserModel;
+
                           BlocProvider.of<TodoBloc>(context).add(
                             AddTodoGroupRemote(
                               _controller.text,
                               todoState.list,
-                              authState.user.props[0],
+                              user.uid,
                               widget.uniqueID,
                             ),
                           );
-                      } else
+                        }
+                      } else {
                         BlocProvider.of<TodoBloc>(context).add(
                           AddTodoGroupLocal(
                             _controller.text,
@@ -75,29 +86,24 @@ class _TodoModalBottomSheetState extends State<TodoModalBottomSheet> {
                             widget.uniqueID,
                           ),
                         );
-                    } else
+                      }
+                    } else {
                       BlocProvider.of<TodoBloc>(context).add(
                           TodoFailure('Not valid group name.', todoState.list));
+                    }
 
                     Navigator.of(context).pop();
                   },
+                  color: Theme.of(context).primaryColor,
                   child: Text(
                     'Add',
                     style: TextStyle(
                       color: Theme.of(context).backgroundColor,
                     ),
                   ),
-                  color: Theme.of(context).primaryColor,
                 ),
               ],
             ),
-          ),
-        ),
-        decoration: BoxDecoration(
-          color: Color(0xfff8f8f8),
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(20),
-            topLeft: Radius.circular(20),
           ),
         ),
       ),

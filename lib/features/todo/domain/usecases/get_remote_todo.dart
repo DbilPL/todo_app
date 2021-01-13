@@ -11,6 +11,6 @@ class GetRemoteTODO extends UseCase<List<TODOGroupModel>, String> {
 
   @override
   Future<Either<Failure, List<TODOGroupModel>>> call(String uid) async {
-    return await repository.getTODO(uid);
+    return repository.getTODO(uid);
   }
 }

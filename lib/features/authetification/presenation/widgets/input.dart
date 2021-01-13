@@ -31,7 +31,7 @@ class MyInput extends StatelessWidget {
       obscureText: isObscure,
       decoration: InputDecoration(
         labelText: labelText,
-        enabledBorder: UnderlineInputBorder(
+        enabledBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: Colors.grey, width: 1),
         ),
         prefixIcon: icon,

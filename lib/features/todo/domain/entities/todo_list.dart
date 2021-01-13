@@ -6,7 +6,7 @@ class TODOList extends Equatable {
 
   final List<TODOModel> todoList;
 
-  TODOList(this.groupName, this.todoList);
+  const TODOList(this.groupName, this.todoList);
 
   @override
   List<Object> get props => [groupName, todoList];

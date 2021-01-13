@@ -15,13 +15,13 @@ void main() {
     usecase = SignIn(mockAuthRepository);
   });
 
-  final UsualUserModel user = UsualUserModel(
+  const UsualUserModel user = UsualUserModel(
     email: 'wow',
     password: 'yay',
     uid: 'yayayayay',
   );
 
-  final SignInParams params = SignInParams(user.email, user.password);
+  final AuthParams params = AuthParams(user.email, user.password);
 
   test('Should sign in with Firebase using repository', () async {
     when(mockAuthRepository.signIn(email: user.email, password: user.password))

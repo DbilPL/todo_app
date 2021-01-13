@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:todoapp/features/notifications/domain/entities/notification.dart';
+import 'package:todoapp/features/notifications/data/models/notifications_model.dart';
 import 'package:todoapp/features/notifications/domain/usecases/set_notification.dart';
 import 'package:todoapp/features/todo/data/model/todo_model.dart';
 
@@ -17,16 +17,15 @@ void main() {
     usecase = SetNotificationLocal(mockNotificationsRepository);
   });
 
-  final int tId = 123454;
+  const int tId = 123454;
 
-  final TODOModel tTodo = TODOModel(
-    date: null,
+  const TODOModel tTodo = TODOModel(
     body: 'yuuuh',
     isComplete: false,
     title: 'myaah',
   );
 
-  final Notification tNotification = Notification(tTodo, tId);
+  const NotificationModel tNotification = NotificationModel(tTodo, tId);
 
   test('Should cancel all notifications using FlutterLocalNotifications',
       () async {

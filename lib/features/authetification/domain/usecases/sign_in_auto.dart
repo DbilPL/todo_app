@@ -6,12 +6,12 @@ import 'package:todoapp/features/authetification/domain/repositories/firebase_au
 import 'package:todoapp/features/settings/domain/usecases/get_current_settings_local.dart';
 
 class SignInAuto extends UseCase<UsualUserModel, NoParams> {
-  final FirebaseAuthRepository repository;
+  final FirebaseAuthRepository _repository;
 
-  SignInAuto(this.repository);
+  SignInAuto(this._repository);
 
   @override
   Future<Either<Failure, UsualUserModel>> call(NoParams params) async {
-    return await repository.signInAuto();
+    return _repository.signInAuto();
   }
 }

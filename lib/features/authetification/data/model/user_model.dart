@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
+
 import 'package:todoapp/features/authetification/domain/enteties/user.dart';
 
 class UserModel extends User {
-  UserModel();
+  const UserModel();
 
   @override
   List<Object> get props => [];
@@ -11,7 +12,7 @@ class UserModel extends User {
 class UsualUserModel extends UserModel {
   final String uid, email, password;
 
-  UsualUserModel({
+  const UsualUserModel({
     this.uid,
     @required this.email,
     @required this.password,
@@ -19,24 +20,36 @@ class UsualUserModel extends UserModel {
 
   Map<String, dynamic> toJSON() {
     return {
-      'email': this.email,
-      'password': this.password,
+      'email': email,
+      'password': password,
     };
   }
 
-  static fromJSON(Map<String, dynamic> json) {
+  factory UsualUserModel.fromJSON(Map<String, dynamic> json) {
     return UsualUserModel(
-      email: json['email'],
-      password: json['password'],
+      email: json['email'] as String,
+      password: json['password'] as String,
     );
   }
 
   @override
   List<Object> get props => [uid, email, password];
+
+  UsualUserModel copyWith({
+    String uid,
+    String email,
+    String password,
+  }) {
+    return UsualUserModel(
+      password: password ?? this.password,
+      email: email ?? this.email,
+      uid: uid ?? this.uid,
+    );
+  }
 }
 
 class NoAccountUser extends UserModel {
-  NoAccountUser() : super();
+  const NoAccountUser() : super();
 
   @override
   List<Object> get props => [];

@@ -14,13 +14,14 @@ import 'package:todoapp/features/settings/presentation/pages/settings_page.dart'
 import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
 
 import 'core/bloc_delegate.dart';
+import 'features/authetification/data/model/user_model.dart';
 import 'features/authetification/presenation/pages/auth_page.dart';
 import 'features/introduction/presentation/bloc/bloc.dart';
 import 'features/todo/presentation/pages/todo_page.dart';
 import 'injection_container.dart';
 import 'injection_container.dart' as di;
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // inits all instances from one point
@@ -31,7 +32,8 @@ void main() async {
     MultiBlocProvider(
       providers: [
         BlocProvider<TodoBloc>(
-          create: (context) => sl<TodoBloc>()..add(LoadLocalTodoInitial([])),
+          create: (context) =>
+              sl<TodoBloc>()..add(const LoadLocalTodoInitial([])),
         ),
         BlocProvider<SettingsBloc>(
           create: (BuildContext context) => sl<SettingsBloc>(),
@@ -94,12 +96,9 @@ class _MyAppState extends State<MyApp> {
                 ),
               ),
             ),
-            localizationsDelegates: [
+            localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
-            ],
-            supportedLocales: [
-              const Locale('en', 'US'), // English
             ],
             routes: {
               '/auth': (context) => AuthPage(),
@@ -131,7 +130,7 @@ class _MyAppState extends State<MyApp> {
               ),
             ),
           );
-        } else
+        } else {
           return MaterialApp(
             title: 'TODO App',
             debugShowCheckedModeBanner: false,
@@ -153,12 +152,9 @@ class _MyAppState extends State<MyApp> {
               '/todo': (context) => TodoPage(),
               '/settings': (context) => SettingsPage(),
             },
-            localizationsDelegates: [
+            localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
-            ],
-            supportedLocales: [
-              const Locale('en', 'US'), // English
             ],
             home: Scaffold(
               body: SafeArea(
@@ -169,11 +165,13 @@ class _MyAppState extends State<MyApp> {
                       Navigator.pushReplacementNamed(context, '/auth');
                     }
                     if (state is Entered) {
+                      final user = state.user as UsualUserModel;
+
                       final isUserRegistered = isRegistered(context);
                       if (isUserRegistered) {
                         BlocProvider.of<SettingsBloc>(context).add(
                           LoadSettingsRemote(
-                            uid: state.user.props[0],
+                            uid: user.uid,
                             prevSettings: BlocProvider.of<SettingsBloc>(context)
                                 .state
                                 .settingsModel,
@@ -183,13 +181,14 @@ class _MyAppState extends State<MyApp> {
                         BlocProvider.of<TodoBloc>(context).add(
                           LoadRemoteTodoInitial(
                             BlocProvider.of<TodoBloc>(context).state.list,
-                            state.user.props[0],
+                            user.uid,
                           ),
                         );
 
                         Navigator.of(context).pushReplacementNamed('/todo');
-                      } else
+                      } else {
                         Navigator.of(context).pushReplacementNamed('/todo');
+                      }
                     }
                   },
                   child: BlocListener<SettingsBloc, SettingsState>(
@@ -210,7 +209,7 @@ class _MyAppState extends State<MyApp> {
                                   color: Theme.of(context).backgroundColor),
                             ),
                             backgroundColor: Colors.red,
-                            duration: Duration(seconds: 2),
+                            duration: const Duration(seconds: 2),
                           ),
                         );
 
@@ -226,7 +225,7 @@ class _MyAppState extends State<MyApp> {
                         }
 
                         if (state is AppStarted) {
-                          await Future.delayed(Duration(seconds: 3), () {
+                          await Future.delayed(const Duration(seconds: 3), () {
                             BlocProvider.of<IntroductionBloc>(context)
                                 .add(EnterOrIntroduce());
                           });
@@ -242,7 +241,6 @@ class _MyAppState extends State<MyApp> {
                               color: Theme.of(context).backgroundColor,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Text(
                                     'Waiting for data...',
@@ -252,9 +250,8 @@ class _MyAppState extends State<MyApp> {
                                             .caption
                                             .color),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 16,
-                                    width: double.infinity,
                                   ),
                                   CircularProgressIndicator(
                                     valueColor: AlwaysStoppedAnimation<Color>(
@@ -266,8 +263,9 @@ class _MyAppState extends State<MyApp> {
                           }
                           if (state is CacheFailureState) {
                             return OnFailurePage();
-                          } else
+                          } else {
                             return Container();
+                          }
                         },
                       ),
                     ),
@@ -276,6 +274,7 @@ class _MyAppState extends State<MyApp> {
               ),
             ),
           );
+        }
       },
     );
   }

@@ -4,20 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:todoapp/features/settings/domain/entities/settings.dart';
 
 class SettingsModel extends Settings {
-  final Color backgroundColor, primaryColor, fontColor;
-
-  final String fontFamily;
-
-  SettingsModel({
-    @required this.backgroundColor,
-    @required this.primaryColor,
-    @required this.fontColor,
-    @required this.fontFamily,
-  }) : super(
+  const SettingsModel(
+      {String fontFamily,
+      Color backgroundColor,
+      Color primaryColor,
+      Color fontColor})
+      : super(
           backgroundColor: backgroundColor,
-          primaryColor: primaryColor,
           fontColor: fontColor,
           fontFamily: fontFamily,
+          primaryColor: primaryColor,
         );
 
   @override
@@ -25,51 +21,61 @@ class SettingsModel extends Settings {
       [backgroundColor, primaryColor, fontColor, fontFamily];
 
   Map<String, dynamic> toJSON() {
-    print('to json');
-
     return {
-      "fontFamily": this.fontFamily,
-      "backgroundColor": [
-        this.backgroundColor.red,
-        this.backgroundColor.green,
-        this.backgroundColor.blue,
+      'fontFamily': fontFamily,
+      'backgroundColor': [
+        backgroundColor.red,
+        backgroundColor.green,
+        backgroundColor.blue,
       ],
-      "primaryColor": [
-        this.primaryColor.red,
-        this.primaryColor.green,
-        this.primaryColor.blue,
+      'primaryColor': [
+        primaryColor.red,
+        primaryColor.green,
+        primaryColor.blue,
       ],
-      "fontColor": [
-        this.fontColor.red,
-        this.fontColor.green,
-        this.fontColor.blue,
+      'fontColor': [
+        fontColor.red,
+        fontColor.green,
+        fontColor.blue,
       ],
     };
   }
 
-  static SettingsModel toSettings(Map<String, dynamic> json) {
-    print(json);
-
+  factory SettingsModel.toSettings(Map<String, dynamic> json) {
     return SettingsModel(
-      fontFamily: json['fontFamily'],
+      fontFamily: json['fontFamily'] as String,
       backgroundColor: Color.fromRGBO(
-        json['backgroundColor'][0],
-        json['backgroundColor'][1],
-        json['backgroundColor'][2],
+        json['backgroundColor'][0] as int,
+        json['backgroundColor'][1] as int,
+        json['backgroundColor'][2] as int,
         1,
       ),
       primaryColor: Color.fromRGBO(
-        json['primaryColor'][0],
-        json['primaryColor'][1],
-        json['primaryColor'][2],
+        json['primaryColor'][0] as int,
+        json['primaryColor'][1] as int,
+        json['primaryColor'][2] as int,
         1,
       ),
       fontColor: Color.fromRGBO(
-        json['fontColor'][0],
-        json['fontColor'][1],
-        json['fontColor'][2],
+        json['fontColor'][0] as int,
+        json['fontColor'][1] as int,
+        json['fontColor'][2] as int,
         1,
       ),
+    );
+  }
+
+  SettingsModel copyWith({
+    Color backgroundColor,
+    Color primaryColor,
+    Color fontColor,
+    String fontFamily,
+  }) {
+    return SettingsModel(
+      fontColor: fontColor ?? this.fontColor,
+      fontFamily: fontFamily ?? this.fontFamily,
+      primaryColor: primaryColor ?? this.primaryColor,
+      backgroundColor: backgroundColor ?? this.backgroundColor,
     );
   }
 }

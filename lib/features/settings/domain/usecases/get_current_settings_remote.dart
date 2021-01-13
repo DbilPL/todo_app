@@ -11,6 +11,6 @@ class GetCurrentSettingsRemote extends UseCase<SettingsModel, String> {
 
   @override
   Future<Either<Failure, SettingsModel>> call(String uid) async {
-    return await repositoryImpl.getCurrentSettings(uid);
+    return repositoryImpl.getCurrentSettings(uid);
   }
 }

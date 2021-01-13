@@ -20,12 +20,16 @@ class TodoRemoteDatasourceImpl extends TODORemoteDatasource {
   Future<List<TODOGroupModel>> getCurrentTODO({String uid}) async {
     final CollectionReference collection = firestore.collection('todo');
 
-    final result = await collection.document(uid).get();
+    final docRef = collection.document(uid);
 
-    final data = result.data['todos'];
+    final document = await docRef.get();
 
-    return List.generate(data.length, (index) {
-      return TODOGroupModel.fromJson(data[index]);
+    final data = document.data['todos'];
+
+    return List.generate(data.length as int, (index) {
+      final map = data[index] as Map<String, dynamic>;
+
+      return TODOGroupModel.fromJson(map);
     });
   }
 
@@ -34,8 +38,12 @@ class TodoRemoteDatasourceImpl extends TODORemoteDatasource {
       {String uid}) async {
     final CollectionReference collection = firestore.collection('todo');
 
-    return await collection
-        .document(uid)
-        .setData({'todos': todogModel.map((val) => val.toJson()).toList()});
+    final docRef = collection.document(uid);
+
+    final data = {
+      'todos': todogModel.map((val) => val.toJson()).toList(),
+    };
+
+    return docRef.setData(data);
   }
 }

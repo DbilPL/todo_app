@@ -5,27 +5,29 @@ import 'package:todoapp/features/settings/data/models/settings_model.dart';
 import 'package:todoapp/features/settings/domain/repositories/local_settings_repository.dart';
 
 class LocalSettingsRepositoryImpl extends LocalSettingsRepository {
-  final SettingsLocalDatasourceImpl localDatasourceImpl;
+  final SettingsLocalDatasourceImpl _localDatasourceImpl;
 
-  LocalSettingsRepositoryImpl(this.localDatasourceImpl);
+  LocalSettingsRepositoryImpl(this._localDatasourceImpl);
 
-  @override
-  Future<Either<Failure, SettingsModel>> getCurrentLocalSavedSettings() async {
+  Future<Either<Failure, T>> _handleCalls<T>(Future<T> Function() call) async {
     try {
-      final settings = localDatasourceImpl.getCurrentLocallySavedSettings();
-      return Right(settings);
+      final result = await call();
+
+      return Right(result);
     } catch (e) {
       return Left(CacheFailure('Something went wrong'));
     }
   }
 
   @override
+  Future<Either<Failure, SettingsModel>> getCurrentLocalSavedSettings() async {
+    return _handleCalls<SettingsModel>(() =>
+        Future.value(_localDatasourceImpl.getCurrentLocallySavedSettings()));
+  }
+
+  @override
   Future<Either<Failure, void>> setSettingsLocally(SettingsModel params) async {
-    try {
-      final set = await localDatasourceImpl.setSettingsLocally(params);
-      return Right(set);
-    } catch (e) {
-      return Left(CacheFailure('Something went wrong'));
-    }
+    return _handleCalls<void>(
+        () => _localDatasourceImpl.setSettingsLocally(params));
   }
 }

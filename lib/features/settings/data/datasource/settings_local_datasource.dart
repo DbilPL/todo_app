@@ -2,23 +2,6 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todoapp/features/settings/data/models/settings_model.dart';
-import 'package:todoapp/features/todo/data/model/todo_model.dart';
-
-///// Uses [FlutterSecureStorage] to get count of times, when user entered
-///// Returns [int], if success, returns [CacheException] when something went wrong
-//Future<int> timesOfEnter();
-//
-///// Uses [FlutterSecureStorage] to increase count of times, when user entered
-///// Returns [int], if success, returns [CacheException] when something went wrong
-//Future<int> increaseTimesOfEnter();
-//
-///// Uses [FlutterSecureStorage] to get [TODOModel] list of list
-///// Returns list of them, if success, returns [CacheException] when something went wrong
-//Future<List<List<TODOModel>>> getTODOList();
-//
-///// Uses [FlutterSecureStorage] to write [TODOModel] list of list on local cache
-///// Returns [CacheException] when something went wrong
-//Future<void> writeTODOList(List<List<TODOModel>> todos);
 
 abstract class SettingsLocalDatasource {
   /// Uses [SharedPreferences] to get current settings
@@ -30,27 +13,31 @@ abstract class SettingsLocalDatasource {
   Future<void> setSettingsLocally(SettingsModel settingsModel);
 }
 
-const SETTINGS_KEY = 'settings';
+const _settingsKey = 'settings';
 
 class SettingsLocalDatasourceImpl extends SettingsLocalDatasource {
-  final SharedPreferences storage;
+  final SharedPreferences _storage;
 
-  SettingsLocalDatasourceImpl(this.storage);
+  SettingsLocalDatasourceImpl(this._storage);
 
   @override
   SettingsModel getCurrentLocallySavedSettings() {
-    final settings = storage.getString(SETTINGS_KEY);
+    final settings = _storage.getString(_settingsKey);
 
-    return SettingsModel.toSettings(json.decode(settings));
+    final map = json.decode(settings) as Map<String, dynamic>;
+
+    return SettingsModel.toSettings(map);
   }
 
   @override
   Future<void> setSettingsLocally(SettingsModel settingsModel) async {
-    await storage.setString(
-      SETTINGS_KEY,
-      json.encode(
-        settingsModel.toJSON(),
-      ),
+    final str = json.encode(
+      settingsModel.toJSON(),
+    );
+
+    await _storage.setString(
+      _settingsKey,
+      str,
     );
   }
 }

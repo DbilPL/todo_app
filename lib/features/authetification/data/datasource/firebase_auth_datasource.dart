@@ -22,63 +22,64 @@ abstract class FirebaseAuthDatasource {
   Future<UsualUserModel> signInAuto();
 }
 
-const AUTH_KEY = 'authentification';
+const String _authKey = 'authentification';
 
 class FirebaseAuthDatasourceImpl extends FirebaseAuthDatasource {
   final FirebaseAuth _auth;
-  final SharedPreferences sharedPreferences;
+  final SharedPreferences _sharedPreferences;
 
-  FirebaseAuthDatasourceImpl(this._auth, this.sharedPreferences);
+  FirebaseAuthDatasourceImpl(this._auth, this._sharedPreferences);
 
   @override
-  Future<void> signOut() async {
-    return await _auth.signOut();
+  Future<void> signOut() {
+    return _auth.signOut();
+  }
+
+  Future<UsualUserModel> _authenticate(
+      {String email,
+      String password,
+      Future<AuthResult> Function({String email, String password})
+          function}) async {
+    final result = await function(email: email, password: password);
+
+    final user = UsualUserModel(
+      password: password,
+      email: email,
+      uid: result.user.uid,
+    );
+
+    await _sharedPreferences.setString(_authKey, jsonEncode(user.toJSON()));
+
+    return user;
   }
 
   @override
-  Future<UsualUserModel> signIn({String email, String password}) async {
-    final AuthResult result = await _auth.signInWithEmailAndPassword(
-        email: email, password: password);
-
-    await sharedPreferences.setString(
-        AUTH_KEY,
-        jsonEncode(UsualUserModel(
-          password: password,
-          email: email,
-          uid: result.user.uid,
-        ).toJSON()));
-
-    return UsualUserModel(
-        email: result.user.email, uid: result.user.uid, password: password);
+  Future<UsualUserModel> signIn({String email, String password}) {
+    return _authenticate(
+        email: email,
+        password: password,
+        function: _auth.signInWithEmailAndPassword);
   }
 
   @override
   Future<UsualUserModel> register({String email, String password}) async {
-    final AuthResult result = await _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
-
-    await sharedPreferences.setString(AUTH_KEY,
-        jsonEncode(UsualUserModel(password: password, email: email).toJSON()));
-
-    return UsualUserModel(
-        password: password, email: email, uid: result.user.uid);
+    return _authenticate(
+        email: email,
+        password: password,
+        function: _auth.signInWithEmailAndPassword);
   }
 
   @override
   Future<UsualUserModel> signInAuto() async {
-    UsualUserModel lUser = UsualUserModel.fromJSON(
+    final lUser = UsualUserModel.fromJSON(
       jsonDecode(
-        sharedPreferences.getString(AUTH_KEY),
-      ),
+        _sharedPreferences.getString(_authKey),
+      ) as Map<String, dynamic>,
     );
-
-    print(lUser.email);
-    print(lUser.password);
 
     final AuthResult result = await _auth.signInWithEmailAndPassword(
         email: lUser.email, password: lUser.password);
 
-    return UsualUserModel(
-        password: lUser.password, email: lUser.email, uid: result.user.uid);
+    return lUser.copyWith(uid: result.user.uid);
   }
 }

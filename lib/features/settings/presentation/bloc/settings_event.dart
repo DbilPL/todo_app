@@ -13,7 +13,7 @@ class LoadSettingsLocalInitial extends SettingsEvent {
 class LoadSettingsLocal extends SettingsEvent {
   final SettingsModel prevSettings;
 
-  LoadSettingsLocal(this.prevSettings);
+  const LoadSettingsLocal(this.prevSettings);
 
   @override
   List<Object> get props => [prevSettings];
@@ -24,7 +24,7 @@ class LoadSettingsRemote extends SettingsEvent {
 
   final SettingsModel prevSettings;
 
-  LoadSettingsRemote({this.uid, this.prevSettings});
+  const LoadSettingsRemote({this.uid, this.prevSettings});
 
   @override
   List<Object> get props => [uid];
@@ -35,7 +35,7 @@ class SetSettingsRemoteEvent extends SettingsEvent {
   final SettingsModel settings;
   final SettingsModel prevSettings;
 
-  SetSettingsRemoteEvent({this.settings, this.prevSettings, this.uid});
+  const SetSettingsRemoteEvent({this.settings, this.prevSettings, this.uid});
 
   @override
   List<Object> get props => [settings, prevSettings, uid];
@@ -45,7 +45,7 @@ class SetSettingsLocalEvent extends SettingsEvent {
   final SettingsModel settings;
   final SettingsModel prevSettings;
 
-  SetSettingsLocalEvent(this.settings, this.prevSettings);
+  const SetSettingsLocalEvent(this.settings, this.prevSettings);
 
   @override
   List<Object> get props => [settings, prevSettings];

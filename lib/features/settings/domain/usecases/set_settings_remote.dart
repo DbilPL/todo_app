@@ -10,6 +10,6 @@ class SetSettingsRemote extends UseCase<void, SetRemoteSettingsParams> {
 
   @override
   Future<Either<Failure, void>> call(SetRemoteSettingsParams params) async {
-    return await remoteSettingsRepository.setSettings(params);
+    return remoteSettingsRepository.setSettings(params);
   }
 }

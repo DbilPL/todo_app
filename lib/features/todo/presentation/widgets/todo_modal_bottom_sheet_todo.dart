@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:todoapp/core/methods.dart';
+import 'package:todoapp/features/authetification/data/model/user_model.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_bloc.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_state.dart';
 import 'package:todoapp/features/todo/presentation/bloc/bloc.dart';
@@ -11,7 +12,7 @@ class TodoModalBottomSheetTodo extends StatefulWidget {
   final String groupName;
   final int id;
 
-  TodoModalBottomSheetTodo(this.groupName, this.id);
+  const TodoModalBottomSheetTodo(this.groupName, this.id);
 
   @override
   _TodoModalBottomSheetTodoState createState() =>
@@ -19,14 +20,21 @@ class TodoModalBottomSheetTodo extends StatefulWidget {
 }
 
 class _TodoModalBottomSheetTodoState extends State<TodoModalBottomSheetTodo> {
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _bodyController = TextEditingController();
-  TextEditingController _dateController = TextEditingController(text: '');
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _bodyController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       child: Container(
+        decoration: const BoxDecoration(
+          color: Color(0xfff8f8f8),
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(20),
+            topLeft: Radius.circular(20),
+          ),
+        ),
         child: Container(
           color: Theme.of(context).backgroundColor,
           child: Padding(
@@ -43,7 +51,7 @@ class _TodoModalBottomSheetTodoState extends State<TodoModalBottomSheetTodo> {
                   style: TextStyle(
                     color: Theme.of(context).textTheme.caption.color,
                   ),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Title',
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey, width: 1),
@@ -61,8 +69,7 @@ class _TodoModalBottomSheetTodoState extends State<TodoModalBottomSheetTodo> {
                   style: TextStyle(
                     color: Theme.of(context).textTheme.caption.color,
                   ),
-                  maxLength: null,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Body',
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey, width: 1),
@@ -81,7 +88,6 @@ class _TodoModalBottomSheetTodoState extends State<TodoModalBottomSheetTodo> {
                   ),
                 ),
                 Row(
-                  mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     RaisedButton(
@@ -112,13 +118,13 @@ class _TodoModalBottomSheetTodoState extends State<TodoModalBottomSheetTodo> {
                           },
                         );
                       },
+                      color: Theme.of(context).primaryColor,
                       child: Text(
                         'Pick date',
                         style: TextStyle(
                           color: Theme.of(context).backgroundColor,
                         ),
                       ),
-                      color: Theme.of(context).primaryColor,
                     ),
                     RaisedButton(
                       onPressed: () async {
@@ -131,59 +137,55 @@ class _TodoModalBottomSheetTodoState extends State<TodoModalBottomSheetTodo> {
                         if (authState is Entered) {
                           final isUserRegistered = isRegistered(context);
                           if (_titleController.text != '' &&
-                              _bodyController.text !=
-                                  '') if (isUserRegistered) {
-                            BlocProvider.of<TodoBloc>(context).add(
-                              AddTodoToGroupRemote(
-                                widget.groupName,
-                                _titleController.text,
-                                _bodyController.text,
-                                _dateController.text,
-                                todoState.list,
-                                widget.id,
-                                authState.user.props[0],
-                              ),
-                            );
+                              _bodyController.text != '') {
+                            if (isUserRegistered) {
+                              final user = authState.user as UsualUserModel;
+
+                              BlocProvider.of<TodoBloc>(context).add(
+                                AddTodoToGroupRemote(
+                                  widget.groupName,
+                                  _titleController.text,
+                                  _bodyController.text,
+                                  _dateController.text,
+                                  todoState.list,
+                                  widget.id,
+                                  user.uid,
+                                ),
+                              );
+                            } else {
+                              BlocProvider.of<TodoBloc>(context).add(
+                                AddTodoToGroupLocal(
+                                  widget.groupName,
+                                  _titleController.text,
+                                  _bodyController.text,
+                                  _dateController.text,
+                                  todoState.list,
+                                  widget.id,
+                                ),
+                              );
+                            }
                           } else {
-                            BlocProvider.of<TodoBloc>(context).add(
-                              AddTodoToGroupLocal(
-                                widget.groupName,
-                                _titleController.text,
-                                _bodyController.text,
-                                _dateController.text,
-                                todoState.list,
-                                widget.id,
-                              ),
-                            );
-                          }
-                          else
                             BlocProvider.of<TodoBloc>(context).add(TodoFailure(
                                 'Not valid texts.', todoState.list));
-                        } else
+                          }
+                        } else {
                           BlocProvider.of<TodoBloc>(context).add(TodoFailure(
                               'How did you get there?!.', todoState.list));
-
+                        }
                         Navigator.of(context).pop();
                       },
+                      color: Theme.of(context).primaryColor,
                       child: Text(
                         'Add',
                         style: TextStyle(
                           color: Theme.of(context).backgroundColor,
                         ),
                       ),
-                      color: Theme.of(context).primaryColor,
                     ),
                   ],
                 ),
               ],
             ),
-          ),
-        ),
-        decoration: BoxDecoration(
-          color: Color(0xfff8f8f8),
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(20),
-            topLeft: Radius.circular(20),
           ),
         ),
       ),

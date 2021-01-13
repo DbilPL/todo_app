@@ -1,41 +1,40 @@
 import 'package:dartz/dartz.dart';
-import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:todoapp/core/errors/failure.dart';
+import 'package:todoapp/core/util/data/datasources/network_data_source.dart';
 import 'package:todoapp/features/todo/data/datasource/todo_remote_datasource.dart';
 import 'package:todoapp/features/todo/data/model/todo_list_model.dart';
 import 'package:todoapp/features/todo/domain/repositories/remote_todo_repository.dart';
 
 class TodoRemoteRepositoryImpl extends RemoteTODORepository {
-  final TodoRemoteDatasourceImpl repositoryImpl;
+  final TodoRemoteDatasourceImpl _dataSourceImpl;
+  final NetworkDataSourceImpl _networkDataSourceImpl;
 
-  TodoRemoteRepositoryImpl(this.repositoryImpl);
+  TodoRemoteRepositoryImpl(this._dataSourceImpl, this._networkDataSourceImpl);
 
-  @override
-  Future<Either<Failure, List<TODOGroupModel>>> getTODO(String uid) async {
-    if (await DataConnectionChecker().hasConnection) {
+  Future<Either<Failure, T>> _handleCalls<T>(Future<T> Function() call) async {
+    if (await _networkDataSourceImpl.hasConnection()) {
       try {
-        final result = await repositoryImpl.getCurrentTODO(uid: uid);
+        final result = await call();
+
         return Right(result);
       } catch (e) {
         return Left(FirebaseFailure('Something went wrong!'));
       }
-    } else
+    } else {
       return Left(ConnectionFailure('You have not connection to internet!'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<TODOGroupModel>>> getTODO(String uid) async {
+    return _handleCalls<List<TODOGroupModel>>(
+        () => _dataSourceImpl.getCurrentTODO(uid: uid));
   }
 
   @override
   Future<Either<Failure, void>> updateTODO(TODORemoteParams params) async {
-    if (await DataConnectionChecker().hasConnection) {
-      try {
-        final success =
-            repositoryImpl.updateCurrentTODO(params.list, uid: params.uid);
-
-        return Right(success);
-      } catch (e) {
-        return Left(FirebaseFailure('Something went wrong!'));
-      }
-    } else
-      return Left(ConnectionFailure('You have not connection to internet!'));
+    return _handleCalls<void>(
+        () => _dataSourceImpl.updateCurrentTODO(params.list));
   }
 }
 

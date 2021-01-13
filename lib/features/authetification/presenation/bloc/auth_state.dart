@@ -13,7 +13,7 @@ class InitialAuthState extends AuthState {
 class FailureState extends AuthState {
   final String failure;
 
-  FailureState(this.failure);
+  const FailureState(this.failure);
 
   @override
   List<Object> get props => [failure];
@@ -22,7 +22,7 @@ class FailureState extends AuthState {
 class FirebaseFailureState extends AuthState {
   final String failure;
 
-  FirebaseFailureState(this.failure);
+  const FirebaseFailureState(this.failure);
 
   @override
   List<Object> get props => [failure];
@@ -36,20 +36,22 @@ class AreYouSureForEnteringWithoutAccount extends AuthState {
 class InputFailure extends AuthState {
   final String failure;
 
-  InputFailure(this.failure);
+  const InputFailure(this.failure);
 
   @override
   List<Object> get props => [];
 }
+
+enum AuthType { auto, register, signIn }
 
 class Entered extends AuthState {
   final UserModel user;
 
   final String error;
 
-  final String typeOf;
+  final AuthType typeOf;
 
-  Entered(this.user, {this.error, this.typeOf});
+  const Entered(this.user, {this.error, this.typeOf});
 
   @override
   List<Object> get props => [user, error, typeOf];

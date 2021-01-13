@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/core/methods.dart';
+import 'package:todoapp/features/authetification/data/model/user_model.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/auth_state.dart';
 import 'package:todoapp/features/authetification/presenation/bloc/bloc.dart';
 import 'package:todoapp/features/settings/presentation/bloc/bloc.dart';
@@ -16,24 +17,27 @@ class TodoPage extends StatefulWidget {
 }
 
 class _TodoPageState extends State<TodoPage> {
+  SnackBar _buildSnackBar(String error) {
+    return SnackBar(
+      content: Text(
+        error,
+        style: TextStyle(
+          color: Theme.of(context).backgroundColor,
+        ),
+      ),
+      backgroundColor: Colors.red,
+      duration: const Duration(seconds: 2),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: BlocListener<SettingsBloc, SettingsState>(
         listener: (context, state) {
           if (state is ConnectionFailureState || state is CacheFailureState) {
-            Scaffold.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Something went wrong with settings!',
-                  style: TextStyle(
-                    color: Theme.of(context).backgroundColor,
-                  ),
-                ),
-                backgroundColor: Colors.red,
-                duration: Duration(seconds: 2),
-              ),
-            );
+            Scaffold.of(context)
+                .showSnackBar(_buildSnackBar('Some error with settings!'));
           }
         },
         child: BlocListener<AuthBloc, AuthState>(
@@ -49,7 +53,9 @@ class _TodoPageState extends State<TodoPage> {
             builder: (context, state) {
               final isUserRegistered = isRegistered(context);
 
-              if (state is Entered)
+              if (state is Entered) {
+                final enteredUser = state.user as UsualUserModel;
+
                 return Scaffold(
                   backgroundColor: Theme.of(context).backgroundColor,
                   appBar: AppBar(
@@ -67,10 +73,10 @@ class _TodoPageState extends State<TodoPage> {
                       child: ListView(
                         children: <Widget>[
                           UserAccountsDrawerHeader(
-                            accountName: Text(''),
+                            accountName: const Text(''),
                             accountEmail: Text(
                               isUserRegistered
-                                  ? state.user.props[1]
+                                  ? enteredUser.email
                                   : 'Anoniymous',
                               style: TextStyle(
                                 color: Theme.of(context).backgroundColor,
@@ -109,8 +115,8 @@ class _TodoPageState extends State<TodoPage> {
                                           BlocProvider.of<TodoBloc>(context)
                                               .state
                                               .list,
-                                          false,
-                                          authState.user.props[0],
+                                          enteredUser.uid,
+                                          areYouSure: false,
                                         ),
                                       )
                                     : BlocProvider.of<TodoBloc>(context).add(
@@ -118,7 +124,7 @@ class _TodoPageState extends State<TodoPage> {
                                             BlocProvider.of<TodoBloc>(context)
                                                 .state
                                                 .list,
-                                            false),
+                                            areYouSure: false),
                                       );
                               }
                               Navigator.of(context).pop();
@@ -154,36 +160,16 @@ class _TodoPageState extends State<TodoPage> {
                       if (state is Entered) {
                         if (state.error != null) {
                           Navigator.of(context).pop();
-                          Scaffold.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                state.error,
-                                style: TextStyle(
-                                  color: Theme.of(context).backgroundColor,
-                                ),
-                              ),
-                              backgroundColor: Colors.red,
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
+                          Scaffold.of(context)
+                              .showSnackBar(_buildSnackBar(state.error));
                         }
                       }
                     },
                     child: BlocListener<TodoBloc, TodoState>(
                       listener: (context, state) {
                         if (state is FailureTodoState) {
-                          Scaffold.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                state.error,
-                                style: TextStyle(
-                                  color: Theme.of(context).backgroundColor,
-                                ),
-                              ),
-                              backgroundColor: Colors.red,
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
+                          Scaffold.of(context)
+                              .showSnackBar(_buildSnackBar(state.error));
                         }
 
                         if (state is AreYouSureForDeletingAllTodo) {
@@ -216,12 +202,6 @@ class _TodoPageState extends State<TodoPage> {
                                   // usually buttons at the bottom of the dialog
                                   FlatButton(
                                     color: Theme.of(context).backgroundColor,
-                                    child: Text(
-                                      'Continue',
-                                      style: TextStyle(
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    ),
                                     onPressed: () {
                                       final isUserRegistered =
                                           isRegistered(context);
@@ -238,26 +218,36 @@ class _TodoPageState extends State<TodoPage> {
                                               BlocProvider.of<TodoBloc>(context)
                                                   .state
                                                   .list,
-                                              true,
-                                              authState.user.props[0],
+                                              enteredUser.uid,
+                                              areYouSure: true,
                                             ),
                                           );
-                                        } else
+                                        } else {
                                           BlocProvider.of<TodoBloc>(context)
                                               .add(
                                             DeleteAllTodoLocal(
                                               BlocProvider.of<TodoBloc>(context)
                                                   .state
                                                   .list,
-                                              true,
+                                              areYouSure: true,
                                             ),
                                           );
+                                        }
                                       }
                                       Navigator.pop(context);
                                     },
+                                    child: Text(
+                                      'Continue',
+                                      style: TextStyle(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
                                   ),
                                   FlatButton(
                                     color: Theme.of(context).backgroundColor,
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
                                     child: Text(
                                       'Back',
                                       style: TextStyle(
@@ -267,9 +257,6 @@ class _TodoPageState extends State<TodoPage> {
                                             .color,
                                       ),
                                     ),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
                                   ),
                                 ],
                               );
@@ -301,12 +288,13 @@ class _TodoPageState extends State<TodoPage> {
                       FloatingActionButtonLocation.centerDocked,
                   bottomNavigationBar: BottomAppBar(
                     color: Theme.of(context).primaryColor,
-                    shape: CircularNotchedRectangle(),
+                    shape: const CircularNotchedRectangle(),
                     child: Container(
                       height: 60,
                     ),
                   ),
                 );
+              }
               return Scaffold(
                 backgroundColor: Theme.of(context).backgroundColor,
                 body: Center(

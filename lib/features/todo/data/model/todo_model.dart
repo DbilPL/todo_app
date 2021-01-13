@@ -1,55 +1,63 @@
-import 'package:flutter/cupertino.dart';
 import 'package:todoapp/features/todo/domain/entities/todo.dart';
 
 class TODOModel extends TODO {
-  final String title, body;
-
-  final DateTime date;
-
-  final bool isComplete;
-
-  TODOModel(
-      {@required this.isComplete,
-      @required this.date,
-      @required this.title,
-      @required this.body})
-      : super(
+  const TODOModel({
+    bool isComplete,
+    DateTime date,
+    String title,
+    String body,
+  }) : super(
           isComplete: isComplete,
           date: date,
           title: title,
           body: body,
         );
 
+  TODOModel copyWith({
+    bool isComplete,
+    DateTime date,
+    String title,
+    String body,
+  }) {
+    return TODOModel(
+      body: body ?? this.body,
+      date: date ?? this.date,
+      isComplete: isComplete ?? this.isComplete,
+      title: title ?? this.title,
+    );
+  }
+
   @override
   List<Object> get props => [title, body, date, isComplete];
 
-  static TODOModel fromJson(Map<String, dynamic> json) {
+  factory TODOModel.fromJson(Map<String, dynamic> json) {
     return TODOModel(
-      isComplete: json['isComplete'],
-      title: json['title'],
-      body: json['body'],
+      isComplete: json['isComplete'] as bool,
+      title: json['title'] as String,
+      body: json['body'] as String,
       date: json['date'] != null
           ? DateTime(
-              json['date'][0],
-              json['date'][1],
-              json['date'][2],
-              json['date'][3],
+              json['date'][0] as int,
+              json['date'][1] as int,
+              json['date'][2] as int,
+              json['date'][3] as int,
             )
           : null,
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
-      'title': this.title,
-      'body': this.body,
-      'isComplete': this.isComplete,
-      'date': this.date != null
+      'title': title,
+      'body': body,
+      'isComplete': isComplete,
+      'date': date != null
           ? [
-              this.date.year,
-              this.date.month,
-              this.date.hour,
-              this.date.minute,
+              date.year,
+              date.month,
+              date.hour,
+              date.minute,
             ]
           : null,
     };

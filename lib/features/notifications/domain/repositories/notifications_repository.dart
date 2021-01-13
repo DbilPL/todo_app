@@ -1,11 +1,15 @@
 import 'package:dartz/dartz.dart';
 import 'package:todoapp/core/errors/failure.dart';
-import 'package:todoapp/features/notifications/domain/entities/notification.dart';
+
+import '../../data/models/notifications_model.dart';
 
 abstract class NotificationsRepository {
-  Future<Either<Failure, void>> setNotification(Notification notification);
+  /// Sets up notification
+  Future<Either<Failure, void>> setNotification(NotificationModel notification);
 
+  /// Cancels notifcication by its id
   Future<Either<Failure, void>> cancelNotification(int id);
 
+  /// Cancels all notifcication
   Future<Either<Failure, void>> cancelAllNotifications();
 }

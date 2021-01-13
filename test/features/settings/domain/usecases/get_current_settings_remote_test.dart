@@ -18,14 +18,14 @@ void main() {
     usecase = GetCurrentSettingsRemote(mockSettingsRepository);
   });
 
-  final tSettings = SettingsModel(
+  const tSettings = SettingsModel(
     backgroundColor: Colors.white,
     primaryColor: Colors.red,
     fontColor: Colors.black,
     fontFamily: 'whyme',
   );
 
-  final String uid = 'toookeeeen';
+  const String uid = 'toookeeeen';
 
   test('Should get settings from Firebase using repository', () async {
     when(mockSettingsRepository.getCurrentSettings(uid))

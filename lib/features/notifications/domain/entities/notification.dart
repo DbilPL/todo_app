@@ -5,7 +5,7 @@ class Notification extends Equatable {
   final TODOModel data;
   final int id;
 
-  Notification(this.data, this.id);
+  const Notification(this.data, this.id);
 
   @override
   List<Object> get props => [data];

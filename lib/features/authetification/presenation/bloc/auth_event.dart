@@ -13,7 +13,7 @@ class UserEntered extends AuthEvent {
 class EnterWithoutAccountEvent extends AuthEvent {
   final bool areYouSure;
 
-  EnterWithoutAccountEvent(this.areYouSure);
+  const EnterWithoutAccountEvent({this.areYouSure});
 
   @override
   List<Object> get props => [areYouSure];

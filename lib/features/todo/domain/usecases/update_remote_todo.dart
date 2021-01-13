@@ -11,6 +11,6 @@ class UpdateRemoteTODO extends UseCase<void, TODORemoteParams> {
 
   @override
   Future<Either<Failure, void>> call(TODORemoteParams params) async {
-    return await repository.updateTODO(params);
+    return repository.updateTODO(params);
   }
 }

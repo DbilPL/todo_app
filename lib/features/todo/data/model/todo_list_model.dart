@@ -9,12 +9,14 @@ class TODOGroupModel extends TODOList {
 
   static TODOGroupModel fromJson(Map<String, dynamic> json) {
     return TODOGroupModel(
-      json['title'],
+      json['title'] as String,
       json['list'] != []
           ? List.generate(
-              json['list'].length,
+              json['list'].length as int,
               (index) {
-                return TODOModel.fromJson(json['list'][index]);
+                final map = json['list'][index] as Map<String, dynamic>;
+
+                return TODOModel.fromJson(map);
               },
             )
           : [],
@@ -23,22 +25,23 @@ class TODOGroupModel extends TODOList {
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = {};
+    final Map<String, dynamic> json = {};
 
-    json['title'] = this.groupName;
+    json['title'] = groupName;
 
-    json['uniqueID'] = this.uniqueID;
+    json['uniqueID'] = uniqueID;
 
     json['list'] = [];
 
-    if (this.todoList != null &&
-        this.todoList != [] &&
-        this.todoList.length != 0)
-      for (int i = 0; i < this.todoList.length; i++) {
-        json['list'].add(this.todoList[i].toJson());
+    if (todoList != null && todoList.isNotEmpty) {
+      for (int i = 0; i < todoList.length; i++) {
+        final map = todoList[i].toJson();
+
+        json['list'].add(map);
       }
-    else
+    } else {
       json['list'] = [];
+    }
 
     return json;
   }

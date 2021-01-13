@@ -8,7 +8,7 @@ class TODO extends Equatable {
 
   final bool isComplete;
 
-  TODO(
+  const TODO(
       {@required this.isComplete,
       @required this.date,
       @required this.title,
@@ -16,18 +16,4 @@ class TODO extends Equatable {
 
   @override
   List<Object> get props => [title, body, date, isComplete];
-
-  Map<String, dynamic> toJson() {
-    return {
-      'title': title,
-      'body': body,
-      'isComplete': isComplete,
-      'date': [
-        date.year,
-        date.month,
-        date.hour,
-        date.minute,
-      ],
-    };
-  }
 }

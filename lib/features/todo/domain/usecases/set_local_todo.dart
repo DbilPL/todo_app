@@ -10,6 +10,6 @@ class SetLocalTODO extends UseCase<void, List<TODOGroupModel>> {
   SetLocalTODO(this.repositoryImpl);
   @override
   Future<Either<Failure, void>> call(List<TODOGroupModel> params) async {
-    return await repositoryImpl.setTODO(params);
+    return repositoryImpl.setTODO(params);
   }
 }

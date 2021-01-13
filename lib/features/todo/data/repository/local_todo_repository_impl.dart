@@ -5,28 +5,35 @@ import 'package:todoapp/features/todo/data/model/todo_list_model.dart';
 import 'package:todoapp/features/todo/domain/repositories/local_todo_repository.dart';
 
 class LocalTODORepositoryImpl extends LocalTODORepository {
-  final TODOLocalDatasourceImpl todoLocalDatasourceImpl;
+  final TODOLocalDatasourceImpl _todoLocalDatasourceImpl;
 
-  LocalTODORepositoryImpl(this.todoLocalDatasourceImpl);
+  LocalTODORepositoryImpl(this._todoLocalDatasourceImpl);
+
+  Future<Either<Failure, T>> _handleCalls<T>(Future<T> Function() call) async {
+    try {
+      final result = await call();
+
+      return Right(result);
+    } catch (e) {
+      return Left(CacheFailure('Something went wrong!'));
+    }
+  }
 
   @override
   Either<Failure, List<TODOGroupModel>> getTODO() {
+    // Its not async
     try {
-      final todo = todoLocalDatasourceImpl.getCurrentTODO();
-      return Right(todo);
+      final result = _todoLocalDatasourceImpl.getCurrentTODO();
+
+      return Right(result);
     } catch (e) {
-      return Left(CacheFailure(e.toString()));
+      return Left(CacheFailure('Something went wrong!'));
     }
   }
 
   @override
   Future<Either<Failure, void>> setTODO(List<TODOGroupModel> params) async {
-    try {
-      final success = await todoLocalDatasourceImpl.setCurrentTODO(params);
-      return Right(success);
-    } catch (e) {
-      print(e);
-      return Left(CacheFailure('Something went wrong!'));
-    }
+    return _handleCalls<void>(
+        () => _todoLocalDatasourceImpl.setCurrentTODO(params));
   }
 }

@@ -8,7 +8,7 @@ class Settings extends Equatable {
 
   final String fontFamily;
 
-  Settings({
+  const Settings({
     @required this.backgroundColor,
     @required this.primaryColor,
     @required this.fontColor,

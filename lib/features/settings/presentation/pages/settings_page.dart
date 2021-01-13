@@ -8,6 +8,8 @@ import 'package:todoapp/features/settings/presentation/bloc/bloc.dart';
 import 'package:todoapp/features/settings/presentation/widgets/color_circle.dart';
 import 'package:todoapp/features/settings/presentation/widgets/font_viewer.dart';
 
+import '../../../authetification/data/model/user_model.dart';
+
 class SettingsPage extends StatefulWidget {
   @override
   _SettingsPageState createState() => _SettingsPageState();
@@ -35,12 +37,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 final isUserRegistered = isRegistered(context);
 
                 if (state is Entered) {
+                  final user = state.user as UsualUserModel;
+
                   return ListView(
                     children: <Widget>[
                       UserAccountsDrawerHeader(
-                        accountName: Text(''),
+                        accountName: const Text(''),
                         accountEmail: Text(
-                          isUserRegistered ? state.user.props[1] : 'Anonymous',
+                          isUserRegistered ? user.email : 'Anonymous',
                           style: TextStyle(
                             color: Theme.of(context).backgroundColor,
                           ),
@@ -59,15 +63,16 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ],
                   );
-                } else
-                  return Text('How did you get here?!');
+                } else {
+                  return const Text('How did you get here?!');
+                }
               },
             ),
           ),
         ),
         body: BlocListener<SettingsBloc, SettingsState>(
           listener: (context, state) {
-            if (state is LoadingSettingsState)
+            if (state is LoadingSettingsState) {
               showDialog(
                 context: context,
                 builder: (context) => Center(
@@ -78,6 +83,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
               );
+            }
 
             if (state is CacheFailureState) {
               Navigator.of(context).pop();
@@ -90,7 +96,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ),
                   backgroundColor: Colors.red,
-                  duration: Duration(seconds: 2),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             }
@@ -105,7 +111,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ),
                   backgroundColor: Colors.red,
-                  duration: Duration(seconds: 2),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             }
@@ -118,6 +124,8 @@ class _SettingsPageState extends State<SettingsPage> {
               final isUserRegistered = isRegistered(context);
 
               if (_state is Entered) {
+                final user = _state.user as UsualUserModel;
+
                 return BlocBuilder<SettingsBloc, SettingsState>(
                   builder: (context, state) {
                     return Column(
@@ -135,12 +143,10 @@ class _SettingsPageState extends State<SettingsPage> {
                             ColorCircle(
                               color: Colors.white,
                               onPressed: () {
-                                SettingsModel newSettings = SettingsModel(
-                                  fontColor: Colors.black,
+                                final SettingsModel newSettings =
+                                    state.settingsModel.copyWith(
                                   backgroundColor: Colors.white,
-                                  fontFamily: state.settingsModel.fontFamily,
-                                  primaryColor:
-                                      state.settingsModel.primaryColor,
+                                  fontColor: Colors.black,
                                 );
 
                                 if (isUserRegistered) {
@@ -148,27 +154,26 @@ class _SettingsPageState extends State<SettingsPage> {
                                     SetSettingsRemoteEvent(
                                       settings: newSettings,
                                       prevSettings: state.settingsModel,
-                                      uid: _state.user.props[0],
+                                      uid: user.uid,
                                     ),
                                   );
-                                } else
+                                } else {
                                   BlocProvider.of<SettingsBloc>(context).add(
                                     SetSettingsLocalEvent(
                                       newSettings,
                                       state.settingsModel,
                                     ),
                                   );
+                                }
                               },
                             ),
                             ColorCircle(
                               color: Colors.black,
                               onPressed: () {
-                                SettingsModel newSettings = SettingsModel(
+                                final SettingsModel newSettings =
+                                    state.settingsModel.copyWith(
                                   fontColor: Colors.white,
                                   backgroundColor: Colors.black,
-                                  fontFamily: state.settingsModel.fontFamily,
-                                  primaryColor:
-                                      state.settingsModel.primaryColor,
                                 );
 
                                 if (isUserRegistered) {
@@ -176,16 +181,17 @@ class _SettingsPageState extends State<SettingsPage> {
                                     SetSettingsRemoteEvent(
                                       settings: newSettings,
                                       prevSettings: state.settingsModel,
-                                      uid: _state.user.props[0],
+                                      uid: user.uid,
                                     ),
                                   );
-                                } else
+                                } else {
                                   BlocProvider.of<SettingsBloc>(context).add(
                                     SetSettingsLocalEvent(
                                       newSettings,
                                       state.settingsModel,
                                     ),
                                   );
+                                }
                               },
                             ),
                           ]
@@ -230,37 +236,22 @@ class _SettingsPageState extends State<SettingsPage> {
                                         BlocProvider.of<SettingsBloc>(context)
                                             .add(
                                           SetSettingsRemoteEvent(
-                                            settings: SettingsModel(
-                                              primaryColor: val,
-                                              backgroundColor: state
-                                                  .settingsModel
-                                                  .backgroundColor,
-                                              fontColor:
-                                                  state.settingsModel.fontColor,
-                                              fontFamily: state
-                                                  .settingsModel.fontFamily,
-                                            ),
+                                            settings: state.settingsModel
+                                                .copyWith(primaryColor: val),
                                             prevSettings: state.settingsModel,
-                                            uid: _state.user.props[0],
+                                            uid: user.uid,
                                           ),
                                         );
-                                      } else
+                                      } else {
                                         BlocProvider.of<SettingsBloc>(context)
                                             .add(
                                           SetSettingsLocalEvent(
-                                            SettingsModel(
-                                              primaryColor: val,
-                                              backgroundColor: state
-                                                  .settingsModel
-                                                  .backgroundColor,
-                                              fontColor:
-                                                  state.settingsModel.fontColor,
-                                              fontFamily: state
-                                                  .settingsModel.fontFamily,
-                                            ),
+                                            state.settingsModel
+                                                .copyWith(primaryColor: val),
                                             state.settingsModel,
                                           ),
                                         );
+                                      }
                                     },
                                   ),
                                 );
@@ -298,35 +289,22 @@ class _SettingsPageState extends State<SettingsPage> {
                                       BlocProvider.of<SettingsBloc>(context)
                                           .add(
                                         SetSettingsRemoteEvent(
-                                          settings: SettingsModel(
-                                            backgroundColor: state
-                                                .settingsModel.backgroundColor,
-                                            fontColor:
-                                                state.settingsModel.fontColor,
-                                            primaryColor: state
-                                                .settingsModel.primaryColor,
-                                            fontFamily: val,
-                                          ),
+                                          settings: state.settingsModel
+                                              .copyWith(fontFamily: val),
                                           prevSettings: state.settingsModel,
-                                          uid: _state.user.props[0],
+                                          uid: user.uid,
                                         ),
                                       );
-                                    } else
+                                    } else {
                                       BlocProvider.of<SettingsBloc>(context)
                                           .add(
                                         SetSettingsLocalEvent(
-                                          SettingsModel(
-                                            primaryColor: state
-                                                .settingsModel.primaryColor,
-                                            backgroundColor: state
-                                                .settingsModel.backgroundColor,
-                                            fontColor:
-                                                state.settingsModel.fontColor,
-                                            fontFamily: val,
-                                          ),
+                                          state.settingsModel
+                                              .copyWith(fontFamily: val),
                                           state.settingsModel,
                                         ),
                                       );
+                                    }
                                   },
                                 );
                               },
@@ -337,7 +315,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     );
                   },
                 );
-              } else
+              } else {
                 return Center(
                   child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(
@@ -345,6 +323,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ),
                 );
+              }
             },
           ),
         ),

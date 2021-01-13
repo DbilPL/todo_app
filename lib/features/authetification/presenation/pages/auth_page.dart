@@ -8,6 +8,9 @@ import 'package:todoapp/features/settings/presentation/bloc/bloc.dart';
 import 'package:todoapp/features/todo/presentation/bloc/todo_bloc.dart';
 import 'package:todoapp/features/todo/presentation/bloc/todo_event.dart';
 
+import '../../data/model/user_model.dart';
+import '../bloc/auth_state.dart';
+
 class AuthPage extends StatefulWidget {
   @override
   _AuthPageState createState() => _AuthPageState();
@@ -20,7 +23,7 @@ class _AuthPageState extends State<AuthPage> {
       backgroundColor: Theme.of(context).backgroundColor,
       body: BlocListener<SettingsBloc, SettingsState>(
         listener: (context, state) {
-          if (state is LoadingSettingsState)
+          if (state is LoadingSettingsState) {
             showDialog(
               context: context,
               builder: (context) => Center(
@@ -31,6 +34,7 @@ class _AuthPageState extends State<AuthPage> {
                 ),
               ),
             );
+          }
           if (state is ConnectionFailureState || state is CacheFailureState) {
             Navigator.of(context).pop();
             Scaffold.of(context).showSnackBar(
@@ -42,7 +46,7 @@ class _AuthPageState extends State<AuthPage> {
                   ),
                 ),
                 backgroundColor: Colors.red,
-                duration: Duration(seconds: 2),
+                duration: const Duration(seconds: 2),
               ),
             );
           }
@@ -57,43 +61,42 @@ class _AuthPageState extends State<AuthPage> {
               final isUserRegistered = isRegistered(context);
 
               if (isUserRegistered) {
-                if (state.typeOf == 'register') {
+                final user = state.user as UsualUserModel;
+                final settingsModel =
+                    BlocProvider.of<SettingsBloc>(context).state.settingsModel;
+
+                final todoList = BlocProvider.of<TodoBloc>(context).state.list;
+
+                if (state.typeOf == AuthType.register) {
                   BlocProvider.of<SettingsBloc>(context).add(
                     SetSettingsRemoteEvent(
-                      uid: state.user.props[0],
-                      prevSettings: BlocProvider.of<SettingsBloc>(context)
-                          .state
-                          .settingsModel,
-                      settings: BlocProvider.of<SettingsBloc>(context)
-                          .state
-                          .settingsModel,
+                      uid: user.uid,
+                      prevSettings: settingsModel,
+                      settings: settingsModel,
                     ),
                   );
 
-                  BlocProvider.of<TodoBloc>(context).add(SetRemoteTodoInitial(
-                    BlocProvider.of<TodoBloc>(context).state.list,
-                    state.user.props[0],
-                    BlocProvider.of<TodoBloc>(context).state.list,
-                  ));
-                } else if (state.typeOf == 'sign in') {
+                  BlocProvider.of<TodoBloc>(context).add(
+                    SetRemoteTodoInitial(todoList, user.uid, todoList),
+                  );
+                } else if (state.typeOf == AuthType.signIn) {
                   BlocProvider.of<SettingsBloc>(context).add(
                     LoadSettingsRemote(
-                      uid: state.user.props[0],
-                      prevSettings: BlocProvider.of<SettingsBloc>(context)
-                          .state
-                          .settingsModel,
+                      uid: user.uid,
+                      prevSettings: settingsModel,
                     ),
                   );
 
                   BlocProvider.of<TodoBloc>(context).add(
                     LoadRemoteTodoInitial(
-                      BlocProvider.of<TodoBloc>(context).state.list,
-                      state.user.props[0],
+                      todoList,
+                      user.uid,
                     ),
                   );
                 }
-              } else
+              } else {
                 Navigator.of(context).pushReplacementNamed('/todo');
+              }
             }
 
             if (state is AreYouSureForEnteringWithoutAccount) {
@@ -126,8 +129,8 @@ class _AuthPageState extends State<AuthPage> {
                           ),
                         ),
                         onPressed: () {
-                          BlocProvider.of<AuthBloc>(context)
-                              .add(EnterWithoutAccountEvent(true));
+                          BlocProvider.of<AuthBloc>(context).add(
+                              const EnterWithoutAccountEvent(areYouSure: true));
                         },
                       ),
                       FlatButton(
@@ -158,7 +161,7 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                   ),
                   backgroundColor: Colors.red,
-                  duration: Duration(seconds: 2),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             }
@@ -173,7 +176,7 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                   ),
                   backgroundColor: Colors.red,
-                  duration: Duration(seconds: 2),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             }
@@ -181,39 +184,42 @@ class _AuthPageState extends State<AuthPage> {
               Scaffold.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                    state.failure + ' Try again!',
+                    '${state.failure} Try again!',
                     style: TextStyle(
                       color: Theme.of(context).backgroundColor,
                     ),
                   ),
                   backgroundColor: Colors.red,
-                  duration: Duration(seconds: 2),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             }
           },
-          child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-            if (state is LoadingState)
-              return Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).primaryColor),
-                ),
-              );
-            else
-              return SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: PageView(
-                    scrollDirection: Axis.vertical,
-                    children: <Widget>[
-                      SignInPage(),
-                      LogInPage(),
-                    ],
+          child: BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if (state is LoadingState) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor),
                   ),
-                ),
-              );
-          }),
+                );
+              } else {
+                return SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: PageView(
+                      scrollDirection: Axis.vertical,
+                      children: <Widget>[
+                        SignInPage(),
+                        LogInPage(),
+                      ],
+                    ),
+                  ),
+                );
+              }
+            },
+          ),
         ),
       ),
     );

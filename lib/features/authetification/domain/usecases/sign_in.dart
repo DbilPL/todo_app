@@ -4,20 +4,19 @@ import 'package:todoapp/core/usecases/usecase.dart';
 import 'package:todoapp/features/authetification/data/model/user_model.dart';
 import 'package:todoapp/features/authetification/domain/repositories/firebase_auth_repository.dart';
 
-class SignInParams {
+class AuthParams {
   final String email, password;
 
-  SignInParams(this.email, this.password);
+  AuthParams(this.email, this.password);
 }
 
-class SignIn extends UseCase<UsualUserModel, SignInParams> {
-  final FirebaseAuthRepository repository;
+class SignIn extends UseCase<UsualUserModel, AuthParams> {
+  final FirebaseAuthRepository _repository;
 
-  SignIn(this.repository);
+  SignIn(this._repository);
 
   @override
-  Future<Either<Failure, UsualUserModel>> call(params) async {
-    return await repository.signIn(
-        password: params.password, email: params.email);
+  Future<Either<Failure, UsualUserModel>> call(AuthParams params) async {
+    return _repository.signIn(password: params.password, email: params.email);
   }
 }

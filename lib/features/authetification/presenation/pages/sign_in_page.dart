@@ -64,26 +64,26 @@ class _SignInPageState extends State<SignInPage> {
               BlocProvider.of<AuthBloc>(context).add(SignInEvent(
                   _emailController.text, _passswordController.text));
             },
+            color: Theme.of(context).primaryColor,
             child: Text(
               'Sign in',
               style: TextStyle(
                 color: Theme.of(context).backgroundColor,
               ),
             ),
-            color: Theme.of(context).primaryColor,
           ),
           RaisedButton(
             onPressed: () {
               BlocProvider.of<AuthBloc>(context)
-                  .add(EnterWithoutAccountEvent(false));
+                  .add(const EnterWithoutAccountEvent(areYouSure: false));
             },
+            color: Theme.of(context).primaryColor,
             child: Text(
               'Enter without account',
               style: TextStyle(
                 color: Theme.of(context).backgroundColor,
               ),
             ),
-            color: Theme.of(context).primaryColor,
           ),
           Text(
             'If you have no account, create it. (swipe down)',

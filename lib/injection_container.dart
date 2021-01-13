@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todoapp/core/util/data/datasources/network_data_source.dart';
+import 'package:todoapp/core/util/data/repostitories/network_repository_impl.dart';
+import 'package:todoapp/core/util/domain/usecases/has_connection.dart';
 import 'package:todoapp/features/authetification/data/datasource/firebase_auth_datasource.dart';
 import 'package:todoapp/features/authetification/data/repositories/firebase_auth_repository_impl.dart';
 import 'package:todoapp/features/authetification/domain/usecases/register.dart';
@@ -44,6 +48,16 @@ Future<void> init() async {
   sl.registerSingleton(FirebaseAuth.instance);
   sl.registerSingleton(Firestore.instance);
   sl.registerSingleton(FlutterLocalNotificationsPlugin());
+  sl.registerSingleton(DataConnectionChecker());
+
+  // Network
+
+  sl.registerSingleton(NetworkDataSourceImpl(sl<DataConnectionChecker>()));
+
+  sl.registerSingleton(NetworkRepositoryImpl(sl<NetworkDataSourceImpl>()));
+
+  sl.registerSingleton(HasConnection(sl<NetworkRepositoryImpl>()));
+
   // settings
   sl.registerSingleton(SettingsLocalDatasourceImpl(sl<SharedPreferences>()));
   sl.registerSingleton(
@@ -52,8 +66,8 @@ Future<void> init() async {
       GetCurrentSettingsLocal(sl<LocalSettingsRepositoryImpl>()));
   sl.registerSingleton(SetSettingsLocal(sl<LocalSettingsRepositoryImpl>()));
   sl.registerSingleton(SettingsRemoteDatasourceImpl(sl<Firestore>()));
-  sl.registerSingleton(
-      RemoteSettingsRepositoryImpl(sl<SettingsRemoteDatasourceImpl>()));
+  sl.registerSingleton(RemoteSettingsRepositoryImpl(
+      sl<SettingsRemoteDatasourceImpl>(), sl<NetworkDataSourceImpl>()));
   sl.registerSingleton(
       GetCurrentSettingsRemote(sl<RemoteSettingsRepositoryImpl>()));
   sl.registerSingleton(SetSettingsRemote(sl<RemoteSettingsRepositoryImpl>()));
@@ -87,8 +101,8 @@ Future<void> init() async {
   // T0D0
   sl.registerSingleton(TodoRemoteDatasourceImpl(sl<Firestore>()));
   sl.registerSingleton(TODOLocalDatasourceImpl(sl<SharedPreferences>()));
-  sl.registerSingleton(
-      TodoRemoteRepositoryImpl(sl<TodoRemoteDatasourceImpl>()));
+  sl.registerSingleton(TodoRemoteRepositoryImpl(
+      sl<TodoRemoteDatasourceImpl>(), sl<NetworkDataSourceImpl>()));
   sl.registerSingleton(LocalTODORepositoryImpl(sl<TODOLocalDatasourceImpl>()));
   sl.registerSingleton(GetRemoteTODO(sl<TodoRemoteRepositoryImpl>()));
   sl.registerSingleton(UpdateRemoteTODO(sl<TodoRemoteRepositoryImpl>()));
@@ -109,8 +123,8 @@ Future<void> init() async {
   /// auth
   sl.registerSingleton(
       FirebaseAuthDatasourceImpl(sl<FirebaseAuth>(), sl<SharedPreferences>()));
-  sl.registerSingleton(
-      FirebaseAuthRepositoryImpl(sl<FirebaseAuthDatasourceImpl>()));
+  sl.registerSingleton(FirebaseAuthRepositoryImpl(
+      sl<FirebaseAuthDatasourceImpl>(), sl<NetworkDataSourceImpl>()));
   sl.registerSingleton(SignOut(sl<FirebaseAuthRepositoryImpl>()));
   sl.registerSingleton(SignIn(sl<FirebaseAuthRepositoryImpl>()));
   sl.registerSingleton(Register(sl<FirebaseAuthRepositoryImpl>()));
@@ -120,5 +134,6 @@ Future<void> init() async {
     sl<SignIn>(),
     sl<Register>(),
     sl<SignInAuto>(),
+    sl<HasConnection>(),
   ));
 }

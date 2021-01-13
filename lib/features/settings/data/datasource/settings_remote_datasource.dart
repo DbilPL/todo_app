@@ -13,27 +13,31 @@ abstract class SettingsRemoteDatasource {
 }
 
 class SettingsRemoteDatasourceImpl extends SettingsRemoteDatasource {
-  final Firestore firestore;
+  final Firestore _firestore;
 
-  SettingsRemoteDatasourceImpl(this.firestore);
+  SettingsRemoteDatasourceImpl(this._firestore);
 
   @override
   Future<SettingsModel> getCurrentSettings(String uid) async {
-    final CollectionReference collection = firestore.collection('settings');
+    final CollectionReference collection = _firestore.collection('settings');
 
-    final result = await collection.document(uid).get();
+    final document = collection.document(uid);
 
-    final data = result.data;
+    final data = await document.get();
 
-    return SettingsModel.toSettings(data);
+    final map = data.data;
+
+    return SettingsModel.toSettings(map);
   }
 
   @override
   Future<void> setSettingsLocally(SetRemoteSettingsParams params) async {
-    final CollectionReference collection = firestore.collection('settings');
+    final collection = _firestore.collection('settings');
 
-    return await collection.document(params.uid).setData(
-          params.settings.toJSON(),
-        );
+    final document = collection.document(params.uid);
+
+    final map = params.settings.toJSON();
+
+    return document.setData(map);
   }
 }

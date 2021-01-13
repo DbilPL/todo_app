@@ -4,6 +4,7 @@ import 'package:mockito/mockito.dart';
 import 'package:todoapp/features/authetification/data/model/user_model.dart';
 import 'package:todoapp/features/authetification/domain/repositories/firebase_auth_repository.dart';
 import 'package:todoapp/features/authetification/domain/usecases/register.dart';
+import 'package:todoapp/features/authetification/domain/usecases/sign_in.dart';
 
 class MockAuthRepository extends Mock implements FirebaseAuthRepository {}
 
@@ -16,13 +17,13 @@ void main() {
     usecase = Register(mockAuthRepository);
   });
 
-  final UsualUserModel user = UsualUserModel(
+  const UsualUserModel user = UsualUserModel(
     email: 'wow',
     password: 'yay',
     uid: 'yayayayay',
   );
 
-  final RegisterParams params = RegisterParams(user.email, user.password);
+  final AuthParams params = AuthParams(user.email, user.password);
 
   test('Should register with Firebase using repository', () async {
     when(mockAuthRepository.register(

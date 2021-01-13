@@ -19,23 +19,23 @@ abstract class LocalNotificationsDatasource {
 }
 
 class LocalNotificationsDatasourceImpl extends LocalNotificationsDatasource {
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
 
-  LocalNotificationsDatasourceImpl(this.flutterLocalNotificationsPlugin) {
-    final initializationSettingsAndroid =
+  LocalNotificationsDatasourceImpl(this._flutterLocalNotificationsPlugin) {
+    const initializationSettingsAndroid =
         AndroidInitializationSettings('app_icon');
-    final initializationSettingsIOS = IOSInitializationSettings();
-    final initializationSettings = InitializationSettings(
+    const initializationSettingsIOS = IOSInitializationSettings();
+    const initializationSettings = InitializationSettings(
       initializationSettingsAndroid,
       initializationSettingsIOS,
     );
-    flutterLocalNotificationsPlugin.initialize(
+    _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onSelectNotification: (String params) async {},
     );
   }
 
-  static AndroidNotificationDetails _androidDetails =
+  static final AndroidNotificationDetails _androidDetails =
       AndroidNotificationDetails(
     'Todo App',
     'Notifications',
@@ -47,26 +47,25 @@ class LocalNotificationsDatasourceImpl extends LocalNotificationsDatasource {
     largeIcon: 'app_icon',
     ledOnMs: 1000,
     ledOffMs: 1000,
-    playSound: true,
     style: AndroidNotificationStyle.BigText,
   );
 
-  static IOSNotificationDetails _iosDetails = IOSNotificationDetails(
+  static final IOSNotificationDetails _iosDetails = IOSNotificationDetails(
       sound: "slow_spring_board.aiff", presentSound: true);
 
-  static NotificationDetails _notificationDetails = NotificationDetails(
+  final NotificationDetails _notificationDetails = NotificationDetails(
     _androidDetails,
     _iosDetails,
   );
 
   @override
   Future<void> cancelNotification(int params) async {
-    await flutterLocalNotificationsPlugin.cancel(params);
+    await _flutterLocalNotificationsPlugin.cancel(params);
   }
 
   @override
   Future<void> setNotification(NotificationModel params) async {
-    await flutterLocalNotificationsPlugin.schedule(
+    await _flutterLocalNotificationsPlugin.schedule(
       params.id,
       'There is TODO to complete!',
       'Title: ${params.data.title}, body: ${params.data.body}',
@@ -78,6 +77,6 @@ class LocalNotificationsDatasourceImpl extends LocalNotificationsDatasource {
 
   @override
   Future<void> cancelAllNotifications() async {
-    await flutterLocalNotificationsPlugin.cancelAll();
+    await _flutterLocalNotificationsPlugin.cancelAll();
   }
 }

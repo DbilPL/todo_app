@@ -18,7 +18,7 @@ void main() {
     usecase = GetCurrentSettingsLocal(mockSettingsRepository);
   });
 
-  final tSettings = SettingsModel(
+  const tSettings = SettingsModel(
     backgroundColor: Colors.white,
     primaryColor: Colors.red,
     fontColor: Colors.black,
